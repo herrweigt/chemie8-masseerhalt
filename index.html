@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemie 8 · Übung · Wohin verschwindet die Masse?</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#1b2a3a;--muted:#5b6b7c;--line:#d8e0ea;--accent:#0b6bcb;--accent-d:#084f96;--warn:#c2410c;--ok:#15803d;--bad:#b91c1c;--navy:#12304f}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;font-size:17px}
+header{background:var(--navy);color:#fff;padding:10px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+header h1{margin:0;font-size:1.25rem}
+header p{margin:2px 0 0;font-size:.85rem;opacity:.85}
+button,select,input,textarea{font:inherit}
+button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;cursor:pointer;min-height:42px}
+button:hover:not(:disabled){border-color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent-d);font-weight:600}
+button.primary:hover:not(:disabled){background:var(--accent-d)}
+header button{background:transparent;color:#fff;border-color:#5d7fa3}
+#nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:8px 14px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#nav button{padding:5px 10px;min-height:36px;font-size:.92rem}
+#nav button.cur{background:var(--navy);color:#fff;border-color:var(--navy)}
+#nav button.done{border-color:var(--ok);color:var(--ok)}
+#nav button.cur.done{color:#fff}
+#nav .time{margin-left:auto;color:var(--muted);font-size:.9rem}
+main{max-width:1000px;margin:0 auto;padding:14px}
+.step{display:none}
+.step.cur{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 14px}
+h2{margin:0 0 8px;font-size:1.4rem;color:var(--navy)}
+h3{margin:14px 0 6px;font-size:1.1rem;color:var(--navy)}
+.lead{font-size:1.05rem}
+.goal{background:#eef5fd;border-left:5px solid var(--accent);border-radius:8px;padding:10px 14px;margin:0 0 14px}
+.goal ul{margin:4px 0 0;padding-left:20px}
+.hint{color:var(--muted);font-size:.92rem}
+.gate{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.opt{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:5px 0;cursor:pointer;background:#fff}
+.opt input{margin-top:5px;transform:scale(1.25)}
+.opt.sel{border-color:var(--accent);background:#eef5fd}
+.opt.right{border-color:var(--ok);background:#ecfdf3}
+.opt.wrong{border-color:var(--bad);background:#fef2f2}
+.fb{margin-top:6px;font-size:.98rem}
+.fb.good{color:var(--ok)}
+.fb.bad{color:var(--bad)}
+.task{margin:0 0 16px;padding-bottom:6px}
+.task .q{font-weight:600;margin-bottom:4px}
+.tip{margin:6px 0;background:#fffbeb;border:1px solid #f3d98a;border-radius:8px;padding:4px 10px}
+.tip summary{cursor:pointer;font-weight:600}
+table.t{border-collapse:collapse;margin:6px 0;font-size:.97rem}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 12px;text-align:center}
+table.t th{background:#eef5fd}
+.he{background:#fffdf5;border:2px solid #e6d28a;border-radius:12px;padding:12px 16px;margin:16px 0}
+.he h3.hh{margin:0 0 4px;font-size:1.05rem;color:#7a5b00}
+.he .hl2{font-size:1.2rem;font-weight:700;margin:10px 0 2px;color:var(--navy)}
+.he .hl3{font-size:1.02rem;font-weight:700;margin:8px 0 2px;color:var(--navy)}
+.he p{margin:2px 0 6px}
+.he select{font-size:.98rem;padding:3px 4px;border:2px solid #b8c4d2;border-radius:6px;background:#fff;max-width:100%}
+.he select.ok{border-color:var(--ok);background:#ecfdf3}
+.he select.no{border-color:var(--bad);background:#fef2f2}
+.he textarea,.own{width:100%;min-height:54px;border:1px solid var(--line);border-radius:8px;padding:6px;margin-top:4px}
+.copyrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+#simWrap{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+#simFrame{width:100%;height:760px;border:0;display:block}
+#simWrap.full{position:fixed;inset:0;z-index:50;border-radius:0;border:0}
+#simWrap.full #simFrame{height:calc(100vh - 52px)}
+#simBar{display:flex;gap:8px;padding:6px 8px;background:#12304f;color:#fff;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#simBar button{background:transparent;color:#fff;border-color:#5d7fa3;min-height:36px;padding:4px 12px}
+.sortgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.bin{border:2px dashed #9fb3c8;border-radius:12px;padding:8px;min-height:130px;cursor:pointer;background:#fafcff}
+.bin h4{margin:0 0 6px;text-align:center;color:var(--navy)}
+.bin.hot{border-color:var(--accent);background:#eef5fd}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{border:2px solid #9fb3c8;border-radius:20px;padding:6px 14px;background:#fff;cursor:pointer;user-select:none}
+.chip.sel{border-color:var(--accent);background:#dbeafe;font-weight:700}
+.chip.good{border-color:var(--ok);background:#ecfdf3;cursor:default}
+.chip.shake{animation:sh .35s}
+@keyframes sh{20%{transform:translateX(-6px)}60%{transform:translateX(6px)}}
+.ampel{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.ampel button{min-width:130px}
+.ampel button.sel.g{background:#dcfce7;border-color:var(--ok)}
+.ampel button.sel.y{background:#fef9c3;border-color:#ca8a04}
+.ampel button.sel.r{background:#fee2e2;border-color:var(--bad)}
+.wsvg{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+.wk{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0}
+.wk .ctl{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.wk .ctl b{min-width:1.5em;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(10,25,45,.55);z-index:60;display:none;align-items:center;justify-content:center;padding:14px}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:14px;max-width:680px;max-height:86vh;overflow:auto;padding:16px 20px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:.95rem;margin:4px 0}
+.schema svg{width:100%;height:auto}
+.imgs{display:flex;gap:12px;flex-wrap:wrap}
+.imgs svg{max-width:100%;height:auto}
+.pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.85rem;background:#eef5fd;border:1px solid #b9d3f0}
+@media(max-width:700px){.sortgrid{grid-template-columns:1fr}#simFrame{height:640px}}
+.pse{display:grid;grid-template-columns:28px repeat(8,minmax(0,1fr));gap:4px;max-width:640px}
+.pse .ph{text-align:center;color:var(--muted);font-size:.85rem;align-self:center}
+.tile{padding:0;min-height:46px;font-weight:700;font-size:1.1rem;border-radius:8px;border:2px solid #9aa5b1}
+.tile.cM{background:#cfe0f5}.tile.cH{background:#cfeccf}.tile.cN{background:#fdeeb0}
+.tile.sg{color:#c0262d}.tile.sl{color:#1d4ed8}.tile.ss{color:#111}
+.tile.on{border-color:#dc2626;box-shadow:0 0 0 2px #dc2626}
+.sw{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid #9aa5b1;vertical-align:-3px}
+.wk button.sel{background:#dbeafe;border-color:var(--accent);font-weight:700}
+/* --- Ergänzungen Chemie 8: Wegwahl und Geräte-Labor --- */
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}
+.mode button{text-align:left;padding:12px 14px;border-width:2px}
+.mode button b{display:block;font-size:1.08rem;color:var(--navy);margin-bottom:2px}
+.mode button.sel{border-color:var(--accent);background:#eef5fd}
+.lab{display:grid;grid-template-columns:260px 1fr;gap:12px;align-items:start}
+.shelf{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#f8fafc}
+.shelf h4{margin:8px 0 4px;font-size:.88rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.shelf h4:first-child{margin-top:0}
+.shelf button{display:block;width:100%;text-align:left;margin:3px 0;padding:6px 10px;min-height:38px;font-size:.95rem}
+.shelf button.on{background:#dbeafe;border-color:var(--accent);font-weight:700}
+.bench .wsvg{max-width:560px}
+.labbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.labmsg{min-height:1.5em;font-size:.98rem;margin:4px 0}
+.labmsg.warn{color:var(--warn);font-weight:600}
+.labmsg.good{color:var(--ok)}
+.hyp{background:#f5f3ff;border-left:5px solid #7c3aed;border-radius:8px;padding:10px 14px;margin:10px 0}
+.hyp select{font-size:1rem;padding:4px;border:2px solid #b8c4d2;border-radius:6px;max-width:100%}
+.hyp.fix{background:#ede9fe}
+.inp{width:96px;padding:6px;border:1px solid var(--line);border-radius:8px;text-align:right}
+.home ol{margin:4px 0 4px;padding-left:22px}
+.home li{margin:3px 0}
+.safety{background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:8px 12px;margin:8px 0}
+.pimgs{display:flex;gap:10px;flex-wrap:wrap}
+.pimgs>div{flex:1 1 220px;max-width:300px}
+.sel2{font-size:1rem;padding:4px;border:2px solid #b8c4d2;border-radius:6px}
+.sel2.ok{border-color:var(--ok);background:#ecfdf3}
+.sel2.no{border-color:var(--bad);background:#fef2f2}
+@media(max-width:760px){.lab{grid-template-columns:1fr}.mode{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Chemie 8 · Übung · Wohin verschwindet die Masse?</h1><p>Distanzunterricht · selbstständig arbeiten · ca. 80 Minuten</p></div>
+  <button id="wsBtn">📖 Wortspeicher</button>
+</header>
+<div id="nav"></div>
+<main>
+
+<!-- ============ 0 START ============ -->
+<section class="step" data-s="0">
+  <div class="card">
+    <h2>Willkommen zur Forscher-Übung</h2>
+    <p class="lead">Beim Backen geht der Teig auf, weil Backpulver ein Gas bildet. Mit Essig passiert das sogar sehr schnell: Es sprudelt kräftig. Heute findest du selbst heraus, <b>was dabei mit der Masse passiert</b>. Du gehst dabei vor wie eine Forscherin oder ein Forscher: Fragestellung, Hypothese, Experiment, Auswertung.</p>
+    <div class="goal"><b>Du kannst danach:</b>
+      <ul>
+        <li>eine <b>Hypothese</b> aufstellen und mit einem Experiment überprüfen,</li>
+        <li><b>offene und geschlossene Systeme</b> unterscheiden und Massenänderungen erklären,</li>
+        <li>den <b>Satz von der Erhaltung der Masse</b> nennen und mit dem Atommodell nach Dalton begründen,</li>
+        <li>ein vollständiges <b>Protokoll</b> in dein digitales Heft übernehmen.</li>
+      </ul>
+    </div>
+    <h3>Ablauf (Richtwerte)</h3>
+    <table class="t">
+      <tr><th>Schritt</th><th>Was</th><th>Zeit</th></tr>
+      <tr><td>0</td><td>Start: Weg wählen + Wiederholung</td><td>8 min</td></tr>
+      <tr><td>1</td><td>Fragestellung und Hypothese</td><td>7 min</td></tr>
+      <tr><td>2</td><td>Experiment 1: offen</td><td>17 min</td></tr>
+      <tr><td>3</td><td>Experiment 2: geschlossen</td><td>17 min</td></tr>
+      <tr><td>4</td><td>Erklärung mit Atomen</td><td>11 min</td></tr>
+      <tr><td>5</td><td>Protokoll ins Heft + Selbstcheck auf mebis</td><td>20 min</td></tr>
+    </table>
+    <h3>So arbeitest du</h3>
+    <ul>
+      <li>Die Aufgaben schalten nacheinander „Weiter“ frei. Bei einer falschen Antwort bekommst du einen Hinweis und versuchst es noch einmal.</li>
+      <li>Am Ende baut die Seite aus deinen Hypothesen und Messwerten ein <b>Protokoll</b>. Das kopierst du mit einem Klick in dein digitales Heft.</li>
+      <li>Wenn du nicht weiterkommst: Tipp aufklappen, im <b>Wortspeicher</b> (oben rechts) nachsehen, dann eine Mitschülerin oder einen Mitschüler anschreiben.</li>
+      <li><b>Lade die Seite nicht neu.</b> Sonst gehen deine Eingaben verloren.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Wie experimentierst du heute?</h3>
+    <div class="mode">
+      <button data-m="home"><b>🏠 Zu Hause mit echten Stoffen</b>Du hast eine Küchenwaage, eine leere 1,5-L-Sprudelflasche (PET), Essig, 2 Päckchen Backpulver und Küchenpapier.</button>
+      <button data-m="lab"><b>💻 Im digitalen Labor</b>Du suchst dir die Geräte selbst aus dem Schrank, baust auf und misst auf einer virtuellen Waage.</button>
+    </div>
+    <p class="hint">Du kannst später jederzeit ins digitale Labor wechseln, zum Beispiel wenn dein Versuch zu Hause nicht klappt.</p>
+    <div id="freiBox" style="display:none">
+      <div class="safety"><b>⚠ Laborfreigabe für zu Hause:</b> Beantworte die drei Sicherheitsfragen. Erst dann bekommst du die Versuchsanleitung. Sag deinen Eltern Bescheid, bevor du anfängst.</div>
+      <div id="f1" class="task"></div>
+      <div id="f2" class="task"></div>
+      <div id="f3" class="task"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Wiederholung</h3>
+    <div id="r1" class="task"></div>
+    <div id="r2" class="task"></div>
+    <div id="r3" class="task"></div>
+    <div class="gate"><button class="primary next">Los geht's ▶</button><span class="hint need"></span></div>
+  </div>
+</section>
+
+<!-- ============ 1 HYPOTHESE ============ -->
+<section class="step" data-s="1">
+  <div class="card">
+    <h2>1 Fragestellung und Hypothese</h2>
+    <div class="goal"><b>Du kannst danach:</b> eine begründete Hypothese formulieren, bevor du experimentierst.</div>
+    <p class="lead">Gibt man Backpulver in Essig, sprudelt es kräftig. Ein Gas entsteht: <b>Kohlenstoffdioxid</b>. Das ist eine chemische Reaktion.</p>
+    <div class="goal" style="font-size:1.08rem"><b>Fragestellung:</b> Wie verändert sich die Masse, wenn Backpulver mit Essig reagiert?</div>
+    <p>Eine <b>Hypothese</b> ist eine begründete Vermutung. Sie darf falsch sein. Wichtig ist, dass du sie <b>vor</b> dem Experiment festlegst. Danach kannst du sie nicht mehr ändern.</p>
+    <div class="hyp" id="h1box">
+      <b>Meine Hypothese 1:</b><br>
+      Ich vermute, dass die Masse nach der Reaktion
+      <select id="h1dir"><option value="">…</option><option value="kleiner">kleiner</option><option value="gleich">gleich groß</option><option value="größer">größer</option></select>
+      ist,
+      <select id="h1why"><option value="">… (Begründung wählen)</option>
+        <option>weil ein Gas entsteht, das aus dem Gefäß entweicht.</option>
+        <option>weil bei der Reaktion ein Teil der Stoffe vernichtet wird.</option>
+        <option>weil keine Stoffe verloren gehen und keine dazukommen.</option>
+        <option>weil neue Stoffe entstehen, die zusätzlich etwas wiegen.</option>
+      </select>
+      <div class="row" style="margin-top:8px"><button id="h1fix" class="primary" disabled>🔒 Hypothese festlegen</button><span class="hint" id="h1msg"></span></div>
+    </div>
+    <details class="tip"><summary>Tipp: Wie finde ich eine gute Begründung?</summary>Denke an das Sprudeln. Wohin geht das Gas, wenn das Gefäß oben offen ist? Und hat ein Gas überhaupt eine Masse? Es gibt hier kein Richtig oder Falsch. Das Experiment entscheidet.</details>
+    <div class="gate"><button class="primary next">Weiter zum Experiment ▶</button><span class="hint need"></span></div>
+  </div>
+</section>
+
+<!-- ============ 2 EXPERIMENT OFFEN ============ -->
+<section class="step" data-s="2">
+  <div class="card">
+    <h2>2 Experiment 1: Reaktion im offenen Gefäß</h2>
+    <div class="goal"><b>Du kannst danach:</b> eine Messung planen, durchführen und deine Hypothese mit den Messwerten überprüfen.</div>
+    <div class="hyp fix" id="h1show"></div>
+    <div class="home" id="home1">
+      <h3>🏠 Anleitung zu Hause: offene Flasche</h3>
+      <div class="safety">Brille aufsetzen (falls vorhanden). Auf einer abwischbaren Unterlage oder neben der Spüle arbeiten. Essig nicht in die Augen bringen.</div>
+      <ol>
+        <li>Fülle ca. <b>100 mL Essig</b> (ein halbes Glas) in die leere 1,5-L-Sprudelflasche.</li>
+        <li>Wickle <b>1 Päckchen Backpulver</b> in ein Stück Küchenpapier. Rolle es zu einer dünnen „Wurst“, die durch den Flaschenhals passt.</li>
+        <li>Stelle Flasche, Papier-Päckchen und Deckel <b>zusammen</b> auf die Waage. Notiere den Wert (<b>vorher</b>).</li>
+        <li>Lass das Päckchen in die Flasche fallen. Der Deckel bleibt <b>neben</b> der Flasche auf der Waage liegen. Die Flasche bleibt <b>offen</b>.</li>
+        <li>Warte, bis es nicht mehr sprudelt (ca. 5 Minuten). Schwenke die Flasche zwischendurch vorsichtig.</li>
+        <li>Notiere den Wert (<b>nachher</b>).</li>
+      </ol>
+      <p class="hint">Klappt etwas nicht? <button class="toLab">💻 Ins digitale Labor wechseln</button></p>
+    </div>
+    <div class="labhint" id="lab1hint">
+      <h3>💻 Dein Auftrag im digitalen Labor</h3>
+      <p>Baue einen <b>offenen</b> Versuch auf: Waage, Gefäß ohne Verschluss, Essig und Backpulver. Überlege selbst, wie du die Masse <b>vorher</b> messen kannst, obwohl die Reaktion sofort startet. Notiere Messwerte mit 📝.</p>
+      <details class="tip"><summary>Tipp 1: Die Reaktion startet zu früh</summary>Wenn das Backpulver direkt in den Essig fällt, sprudelt es sofort. Pack es in ein <b>Küchenpapier-Päckchen</b>. So kannst du alles zuerst wiegen und dann die Reaktion starten.</details>
+      <details class="tip"><summary>Tipp 2: Die Anzeige ändert sich nicht</summary>Ist deine Waage genau genug? Und entsteht mit deinem Stoff genug Gas? Probiere eine genauere Waage oder einen anderen Stoff.</details>
+    </div>
+    <div class="labslot" data-slot="2"></div>
+  </div>
+  <div class="card">
+    <h3>Messwerte Experiment 1</h3>
+    <div id="tab1"></div>
+    <h3>Auswertung</h3>
+    <div class="task" id="aw1">
+      <div class="q">Vergleiche deine Messwerte mit deiner Hypothese.</div>
+      <p>Die Masse ist nach der Reaktion <select class="sel2" id="aw1a"><option value="">…</option><option value="kleiner">kleiner</option><option value="gleich">gleich groß</option><option value="größer">größer</option></select>. Meine Hypothese 1 ist damit <select class="sel2" id="aw1b"><option value="">…</option><option value="bestätigt">bestätigt</option><option value="widerlegt">widerlegt</option></select>.</p>
+      <div class="fb" id="aw1fb"></div>
+    </div>
+    <div id="wohin" class="task"></div>
+    <div class="gate"><button class="primary next">Weiter zu Experiment 2 ▶</button><span class="hint need"></span></div>
+  </div>
+</section>
+
+<!-- ============ 3 EXPERIMENT GESCHLOSSEN ============ -->
+<section class="step" data-s="3">
+  <div class="card">
+    <h2>3 Experiment 2: Reaktion im geschlossenen Gefäß</h2>
+    <div class="goal"><b>Du kannst danach:</b> aus einem Ergebnis eine neue Hypothese ableiten und sie mit einem veränderten Experiment prüfen.</div>
+    <p class="lead">Deine Vermutung: Das Gas hat eine Masse und ist entwichen. Das musst du jetzt beweisen. Dafür brauchst du ein neues Experiment.</p>
+    <div id="plan" class="task"></div>
+    <div class="hyp" id="h2box" style="display:none">
+      <b>Meine Hypothese 2:</b><br>
+      Wenn das Gas eine Masse hat und nicht entweichen kann, dann ist die Masse nach der Reaktion
+      <select id="h2dir"><option value="">…</option><option value="kleiner">kleiner</option><option value="gleich">gleich groß</option><option value="größer">größer</option></select>.
+      <div class="row" style="margin-top:8px"><button id="h2fix" class="primary" disabled>🔒 Hypothese festlegen</button><span class="hint" id="h2msg"></span></div>
+    </div>
+    <div id="exp2" style="display:none">
+      <div class="home" id="home2">
+        <h3>🏠 Anleitung zu Hause: geschlossene Flasche</h3>
+        <div class="safety"><b>⚠ Nur eine PET-Flasche für Sprudel verwenden, niemals Glas.</b> Höchstens 1 Päckchen Backpulver. Flasche nicht schütteln. Zum Öffnen über die Spüle halten, Öffnung vom Gesicht weg, langsam aufdrehen.</div>
+        <ol>
+          <li>Spüle die Flasche aus und fülle wieder ca. <b>100 mL Essig</b> ein.</li>
+          <li>Wickle das zweite Päckchen Backpulver wie vorher in Küchenpapier.</li>
+          <li>Flasche, Papier-Päckchen und Deckel zusammen auf die Waage. Wert notieren (<b>vorher</b>).</li>
+          <li>Päckchen hineinfallen lassen und den Deckel <b>sofort fest zudrehen</b>. Das Papier weicht erst langsam auf.</li>
+          <li>Warten, bis es nicht mehr sprudelt. Wert notieren (<b>nach der Reaktion</b>).</li>
+          <li>Über der Spüle langsam öffnen, bis es nicht mehr zischt. Flasche und Deckel wieder auf die Waage. Wert notieren (<b>nach dem Öffnen</b>).</li>
+        </ol>
+        <p class="hint">Entsorgung: Inhalt in die Spüle, mit Wasser nachspülen. Klappt etwas nicht? <button class="toLab">💻 Ins digitale Labor wechseln</button></p>
+      </div>
+      <div class="labhint" id="lab2hint">
+        <h3>💻 Dein Auftrag im digitalen Labor</h3>
+        <p>Baue den Versuch so um, dass das Gas <b>nicht entweichen</b> kann. Miss vorher, nach der Reaktion und noch einmal nach dem Öffnen. Notiere alle drei Werte mit 📝.</p>
+        <details class="tip"><summary>Tipp: Welches Gefäß?</summary>Nur ein Gefäß, das man verschließen kann und das dem Gasdruck standhält. Probiere ruhig auch die anderen Verschlüsse aus und beobachte, was passiert.</details>
+      </div>
+      <div class="labslot" data-slot="3"></div>
+    </div>
+  </div>
+  <div class="card" id="aw2card" style="display:none">
+    <h3>Messwerte Experiment 2</h3>
+    <div id="tab2"></div>
+    <h3>Auswertung</h3>
+    <div class="task" id="aw2">
+      <div class="q">Vergleiche die Messwerte mit deiner Hypothese 2.</div>
+      <p>Im geschlossenen Gefäß ist die Masse nach der Reaktion <select class="sel2" id="aw2a"><option value="">…</option><option value="kleiner">kleiner</option><option value="gleich">gleich groß</option><option value="größer">größer</option></select>. Nach dem Öffnen ist sie <select class="sel2" id="aw2b"><option value="">…</option><option value="kleiner">kleiner</option><option value="gleich">gleich groß</option><option value="größer">größer</option></select>. Meine Hypothese 2 ist damit <select class="sel2" id="aw2c"><option value="">…</option><option value="bestätigt">bestätigt</option><option value="widerlegt">widerlegt</option></select>.</p>
+      <div class="fb" id="aw2fb"></div>
+    </div>
+    <div id="oeffnen" class="task"></div>
+    <div class="gate"><button class="primary next">Weiter zur Erklärung ▶</button><span class="hint need"></span></div>
+  </div>
+</section>
+
+<!-- ============ 4 ERKLÄRUNG ============ -->
+<section class="step" data-s="4">
+  <div class="card">
+    <h2>4 Der Satz von der Erhaltung der Masse</h2>
+    <div class="goal"><b>Du kannst danach:</b> den Satz von der Erhaltung der Masse nennen und mit dem Atommodell nach Dalton begründen.</div>
+    <p>Der französische Chemiker <b>Antoine Lavoisier</b> hat im 18. Jahrhundert ähnliche Versuche sehr genau gewogen. Sein Ergebnis kennst du jetzt aus deinem eigenen Experiment:</p>
+    <div class="goal" style="font-size:1.05rem"><b>Satz von der Erhaltung der Masse:</b> Bei einer chemischen Reaktion in einem <b>geschlossenen System</b> ist die Gesamtmasse der Ausgangsstoffe gleich der Gesamtmasse der Produkte.</div>
+    <h3>Blick durch die Teilchenbrille</h3>
+    <p>Nach Dalton bestehen alle Stoffe aus Atomen. Die Bilder zeigen nur die Atome, aus denen später das Gas Kohlenstoffdioxid wird. Die gestrichelte Linie zeigt das <b>System</b>: alles, was auf der Waage steht. Was die Linie verlässt, wird nicht mehr mitgewogen.</p>
+    <div class="legend"><span><svg width="22" height="22"><circle cx="11" cy="11" r="9" fill="#4b5563" stroke="#111827" stroke-width="1.5"/></svg> Kohlenstoff-Atom (C)</span><span><svg width="22" height="22"><circle cx="11" cy="11" r="9" fill="#e5483b" stroke="#9b2217" stroke-width="1.5"/></svg> Sauerstoff-Atom (O)</span></div>
+    <div class="pimgs" id="pimgs"></div>
+  </div>
+  <div class="card">
+    <div id="tTeil" class="task"></div>
+    <div id="tDalton" class="task"></div>
+    <div class="task" id="tNum"><div class="q">Rechenaufgabe: Ein geschlossener Versuch wiegt vorher 150,6 g. Nach dem Öffnen zeigt die Waage nur noch 148,4 g an. Wie viel Gramm Kohlenstoffdioxid sind entwichen?</div>
+      <div class="row"><input id="numIn" type="text" inputmode="decimal" class="inp" style="width:110px"> g <button id="numBtn">Prüfen</button></div>
+      <details class="tip"><summary>Tipp</summary>Was fehlt, ist entwichen. Bilde den Unterschied zwischen vorher und nach dem Öffnen.</details>
+      <div class="fb" id="numFb"></div></div>
+    <div class="gate"><button class="primary next">Weiter zum Protokoll ▶</button><span class="hint need"></span></div>
+  </div>
+</section>
+
+<!-- ============ 5 PROTOKOLL + ABSCHLUSS ============ -->
+<section class="step" data-s="5">
+  <div class="card">
+    <h2>5 Dein Protokoll</h2>
+    <p class="lead">Die Seite hat aus deinen Hypothesen und Messwerten ein Protokoll gebaut. Fülle die Lücken in der Auswertung aus. Dann kopierst du alles in dein digitales Heft.</p>
+    <div id="prot"></div>
+    <div class="row"><button id="pngBtn">🖼️ Skizze für mein Heft speichern</button><span class="hint">Die Skizze zeigt den geschlossenen Versuch. Füge sie unter „Durchführung“ ein.</span></div>
+  </div>
+  <div class="card">
+    <h3>Wie sicher fühlst du dich?</h3>
+    <div id="ampel"></div>
+    <h3>Selbstcheck „Masseerhalt“ auf mebis (ca. 12 Minuten)</h3>
+    <p>Vier Fragen zu neuen Situationen. Du antwortest in ganzen Sätzen und bekommst nach jeder Antwort ein KI-Feedback. Du musst dafür bei mebis angemeldet sein. Herr Weigt sieht deine Antworten.</p>
+    <p><a id="testLink" class="pill" href="#" target="_blank" rel="noopener" style="font-size:1.05rem;padding:8px 16px">▶ Selbstcheck „Masseerhalt“ öffnen</a> <span class="hint" id="testHint"></span></p>
+  </div>
+  <div class="card">
+    <h3>🔬 Forscherecke (freiwillig, für Schnelle)</h3>
+    <p class="hint">Probiere die Versuche im digitalen Labor aus und beantworte dann die Frage.</p>
+    <div class="labslot" data-slot="5"></div>
+    <div id="x1" class="task"></div>
+    <div id="x2" class="task"></div>
+    <div id="x3" class="task"></div>
+    <p class="hint" style="margin-top:14px">Geschafft: Du hast selbst gezeigt, dass bei einer chemischen Reaktion keine Masse verloren geht. Sie kann nur aus einem offenen Gefäß entweichen.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ DIGITALES LABOR (wird in den jeweiligen Schritt verschoben) ============ -->
+<div id="labBox" class="card" style="background:#fbfdff">
+  <h3 style="margin-top:0">💻 Digitales Labor</h3>
+  <p class="hint">Tippe im Geräteschrank auf Geräte und Stoffe. Sie kommen auf die Arbeitsfläche. Noch einmal tippen nimmt sie wieder weg.</p>
+  <div class="lab">
+    <div class="shelf" id="shelf"></div>
+    <div class="bench">
+      <svg id="labSvg" class="wsvg" viewBox="0 0 520 390" role="img" aria-label="Versuchsaufbau"></svg>
+      <div class="labmsg" id="labMsg"></div>
+      <div class="labbar">
+        <button id="bNote" class="primary">📝 Messwert notieren</button>
+        <button id="bStart">▶ Reaktion starten</button>
+        <button id="bOpen">🔓 Deckel aufdrehen</button>
+        <button id="bLens">🔍 Teilchenbrille</button>
+        <button id="bClear">🧹 Alles abräumen</button>
+      </div>
+      <h4 style="margin:8px 0 2px;color:var(--navy)">Mein Laborbuch</h4>
+      <table class="t" id="logTab"></table>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="wsModal"><div class="box">
+  <h2>Wortspeicher</h2>
+  <ul>
+    <li><b>Fragestellung:</b> die Frage, die ein Experiment beantworten soll.</li>
+    <li><b>Hypothese:</b> begründete Vermutung, die man vor dem Experiment festlegt. Das Experiment bestätigt oder widerlegt sie.</li>
+    <li><b>System:</b> alles, was untersucht wird, hier: alles, was auf der Waage steht.</li>
+    <li><b>offenes System:</b> Stoffe (z. B. Gase) können mit der Umgebung ausgetauscht werden.</li>
+    <li><b>geschlossenes System:</b> kein Stoff tritt ein oder aus.</li>
+    <li><b>Kohlenstoffdioxid:</b> farbloses Gas. Es entsteht, wenn Backpulver mit Essig reagiert.</li>
+    <li><b>Messgenauigkeit:</b> der kleinste Unterschied, den eine Waage anzeigen kann (Küchenwaage: 1 g).</li>
+    <li><b>Edukte / Produkte:</b> Ausgangsstoffe / entstehende Stoffe einer Reaktion.</li>
+    <li><b>Satz von der Erhaltung der Masse:</b> im geschlossenen System ist die Gesamtmasse vor und nach der Reaktion gleich (Lavoisier).</li>
+    <li><b>Atommodell nach Dalton:</b> Bei einer Reaktion werden Atome umgruppiert. Keins geht verloren, keins kommt dazu.</li>
+  </ul>
+  <button class="primary" id="wsClose">Schließen</button>
+</div></div>
+
+<script>
+(function(){
+'use strict';
+var $ = function(id){ return document.getElementById(id); };
+var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var shuffle = function(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+var esc = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+var fmt = function(v, res){ return (res === 0.1 ? v.toFixed(1) : (Math.abs(v - Math.round(v)) < 1e-9 ? v.toFixed(0) : v.toFixed(1))).replace('.', ','); };
+var num = function(s){ var v = parseFloat(String(s).replace(',', '.')); return isNaN(v) ? null : v; };
+
+var MEBIS_TEST_URL = 'https://lernplattform.bycs.de/mod/quiz/view.php?id=106282853'; /* mebis: Link zum Selbstcheck „Masseerhalt“ hier eintragen */
+window.__MCS = [];
+var STEPS = [ { t: 'Start', min: 8 }, { t: '1 Hypothese', min: 7 }, { t: '2 Offen', min: 17 }, { t: '3 Geschlossen', min: 17 }, { t: '4 Erklärung', min: 11 }, { t: '5 Protokoll + Test', min: 20 } ];
+var S = { step: 0, max: 0, ok: {}, ampel: {}, mode: null, h1: null, h2: null, d1: {}, d2: {}, src1: null, src2: null };
+
+/* ---------- Aufgabentypen (wie Chemie 9) ---------- */
+function mc(el, cfg) {
+  window.__MCS.push({ id: el.id, opts: cfg.opts.map(function(o){ return { t: o.t, ok: !!o.ok }; }) });
+  el.classList.add('task');
+  var order = shuffle(cfg.opts.map(function(o, i){ return i; }));
+  if (cfg.keepOrder) order = cfg.opts.map(function(o, i){ return i; });
+  var html = '<div class="q">' + cfg.q + '</div>' + (cfg.img ? '<div class="imgs">' + cfg.img + '</div>' : '') + '<div class="opts">';
+  order.forEach(function(i){
+    html += '<label class="opt"><input type="' + (cfg.multi ? 'checkbox' : 'radio') + '" name="' + (cfg.key || el.id) + '" value="' + i + '"> <span>' + cfg.opts[i].t + '</span></label>';
+  });
+  html += '</div>' + (cfg.tip ? '<details class="tip"><summary>Tipp</summary>' + cfg.tip + '</details>' : '') + '<div class="fb"></div>';
+  el.innerHTML = html;
+  var fb = el.querySelector('.fb'), done = false;
+  $$('input', el).forEach(function(inp){ inp.addEventListener('change', function(){
+    if (done) return; var o = cfg.opts[+inp.value], lab = inp.closest('.opt');
+    if (o.ok) { lab.classList.add('right'); fb.className = 'fb good'; fb.innerHTML = '✓ ' + (o.fb || 'Richtig.'); done = true; $$('input', el).forEach(function(x){ x.disabled = true; }); if (cfg.onOk) cfg.onOk(); refresh(); }
+    else { lab.classList.add('wrong'); fb.className = 'fb bad'; fb.innerHTML = '✗ ' + (o.fb || 'Nicht ganz. Versuche es noch einmal.'); setTimeout(function(){ lab.classList.remove('wrong'); inp.checked = false; }, 1400); }
+  }); });
+}
+
+/* ---------- Hefteintrag-Baukasten (wie Chemie 9, erweitert um feste Blöcke) ---------- */
+var HE = {};
+function gapHTML(text) {
+  return text.replace(/\[\[(.+?)\]\]/g, function(_, g){
+    var opts = g.split(';'), right = null;
+    opts = opts.map(function(o){ if (o.slice(-1) === '*') { o = o.slice(0, -1); right = o; } return o; });
+    return '<select data-r="' + esc(right) + '"><option value="">…</option>' + shuffle(opts).map(function(o){ return '<option>' + esc(o) + '</option>'; }).join('') + '</select>';
+  });
+}
+function buildHE(id, title, blocks, key) {
+  var el = $(id), h = '<div class="he"><h3 class="hh">✏️ ' + title + '</h3><div class="hint">Wähle in jeder Lücke das richtige Wort. Dann kopierst du das Protokoll in dein Heft.</div>';
+  blocks.forEach(function(b){
+    if (b.h2) h += '<div class="hl2">' + b.h2 + '</div>';
+    else if (b.h3) h += '<div class="hl3">' + b.h3 + '</div>';
+    else if (b.p) h += '<p>' + gapHTML(b.p) + '</p>';
+    else if (b.table) h += '<div class="hetab">' + b.table + '</div>';
+  });
+  h += '<div class="hl3">Eigene Ergänzung (freiwillig)</div><textarea class="own" placeholder="z. B. was bei dir zu Hause anders war, eine Fehlerquelle, eine neue Frage …"></textarea>';
+  h += '<div class="copyrow"><button class="primary cpy" disabled>Protokoll in die Zwischenablage kopieren</button><span class="hint msg">Zuerst alle Lücken richtig ausfüllen.</span></div></div>';
+  el.innerHTML = h; HE[id] = { el: el, key: key }; S.ok[key] = !$$('select', el).length;
+  if (S.ok[key]) { $$('.cpy', el)[0].disabled = false; $$('.msg', el)[0].textContent = ''; }
+  $$('select', el).forEach(function(s){ s.addEventListener('change', function(){
+    s.classList.remove('ok','no'); if (s.value) s.classList.add(s.value === s.dataset.r ? 'ok' : 'no');
+    var all = $$('select', el).every(function(x){ return x.value === x.dataset.r; });
+    S.ok[key] = all; $$('.cpy', el)[0].disabled = !all; $$('.msg', el)[0].textContent = all ? '✓ Alles richtig. Du kannst kopieren.' : 'Rot markierte Lücken noch einmal überlegen.'; refresh(); }); });
+  $$('.cpy', el)[0].addEventListener('click', function(){ copyHE([id], $$('.msg', el)[0]); });
+}
+function heContent(id) {
+  var el = HE[id].el.querySelector('.he'), html = '', plain = '';
+  Array.prototype.forEach.call(el.children, function(c){
+    if (c.classList.contains('hl2')) { html += '<h2>' + c.innerHTML + '</h2>'; plain += '\n' + c.textContent + '\n'; }
+    else if (c.classList.contains('hl3')) { if (/Eigene Erg/.test(c.textContent)) return; html += '<h3>' + c.innerHTML + '</h3>'; plain += '\n' + c.textContent + '\n'; }
+    else if (c.tagName === 'P') { var cl = c.cloneNode(true), vals = $$('select', c).map(function(x){ return x.value; }); $$('select', cl).forEach(function(s, k){ var b = document.createElement('b'); b.textContent = vals[k]; s.replaceWith(b); }); html += '<p>' + cl.innerHTML + '</p>'; plain += cl.textContent + '\n'; }
+    else if (c.classList.contains('hetab')) { var tb = c.querySelector('table'); if (tb) { html += tb.outerHTML; plain += $$('tr', tb).map(function(r){ return $$('th,td', r).map(function(x){ return x.textContent; }).join('\t'); }).join('\n') + '\n'; } }
+    else if (c.tagName === 'TEXTAREA' && c.value.trim()) { html += '<p><i>Meine Ergänzung: ' + esc(c.value) + '</i></p>'; plain += 'Meine Ergänzung: ' + c.value + '\n'; }
+  });
+  return { html: html, plain: plain };
+}
+function copyHE(ids, msgEl) {
+  var html = '', plain = '';
+  ids.forEach(function(id){ var c = heContent(id); html += c.html; plain += c.plain + '\n'; });
+  function ok() { msgEl.textContent = '✓ Kopiert. Jetzt in dein digitales Heft einfügen.'; S.ok.copied = true; }
+  function fallback() {
+    var d = document.createElement('div'); d.innerHTML = html; d.style.cssText = 'position:fixed;left:-9999px;top:0;'; document.body.appendChild(d);
+    var r = document.createRange(); r.selectNodeContents(d); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    var good = false; try { good = document.execCommand('copy'); } catch (e) {} sel.removeAllRanges(); document.body.removeChild(d);
+    if (good) ok(); else msgEl.textContent = 'Kopieren nicht möglich. Markiere den Text selbst und kopiere ihn.';
+  }
+  try {
+    if (navigator.clipboard && window.ClipboardItem) {
+      navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([plain], { type: 'text/plain' }) })]).then(ok, fallback);
+    } else fallback();
+  } catch (e) { fallback(); }
+}
+
+/* ---------- Navigation ---------- */
+function need(i) {
+  var chk = function(keys, names) { var m = []; keys.forEach(function(k){ if (!S.ok[k]) m.push(names[k]); }); return m.length ? 'Noch offen: ' + m.join(', ') : ''; };
+  switch (i) {
+    case 1: var k1 = ['mode', 'r1', 'r2', 'r3']; if (S.mode === 'home') k1.push('frei');
+      return chk(k1, { mode: 'Weg wählen', r1: 'Wiederholung 1', r2: 'Wiederholung 2', r3: 'Wiederholung 3', frei: 'Laborfreigabe' });
+    case 2: return chk(['h1'], { h1: 'Hypothese festlegen' });
+    case 3: return chk(['d1', 'aw1', 'wohin'], { d1: 'Messwerte Experiment 1', aw1: 'Auswertung', wohin: 'Erklärung' });
+    case 4: return chk(['plan', 'h2', 'd2', 'aw2', 'oeffnen'], { plan: 'Planung', h2: 'Hypothese 2', d2: 'Messwerte Experiment 2', aw2: 'Auswertung', oeffnen: 'Erklärung' });
+    case 5: return chk(['teil', 'dalton', 'num'], { teil: 'Teilchenbild', dalton: 'Dalton-Frage', num: 'Rechenaufgabe' });
+  }
+  return '';
+}
+function renderNav() {
+  var nav = $('nav'); nav.innerHTML = '';
+  STEPS.forEach(function(s, i){
+    var b = document.createElement('button'); b.textContent = s.t;
+    b.className = (i === S.step ? 'cur ' : '') + (i < S.max ? 'done' : '');
+    b.disabled = i > S.max; b.addEventListener('click', function(){ go(i); });
+    nav.appendChild(b);
+  });
+  var rest = 0; for (var i = S.step; i < STEPS.length; i++) rest += STEPS[i].min;
+  var t = document.createElement('span'); t.className = 'time'; t.textContent = 'noch ca. ' + rest + ' min'; nav.appendChild(t);
+}
+function placeLab() {
+  var slot = $$('.step.cur .labslot')[0], box = $('labBox');
+  var show = slot && (S.step === 5 || S.mode === 'lab' || S.forceLab);
+  if (S.step === 3 && !S.ok.h2) show = false;
+  if (show) { slot.appendChild(box); box.style.display = ''; } else { document.body.appendChild(box); box.style.display = 'none'; }
+}
+function go(i) {
+  S.step = i; if (i > S.max) S.max = i;
+  $$('.step').forEach(function(s){ s.classList.toggle('cur', +s.dataset.s === i); });
+  if (i === 2) enter2();
+  if (i === 3) enter3();
+  if (i === 4) enter4();
+  if (i === 5) enter5();
+  applyMode(); renderNav(); refresh(); window.scrollTo(0, 0);
+}
+function refresh() {
+  $$('.step').forEach(function(sec){
+    var i = +sec.dataset.s, n = need(i + 1);
+    $$('.next', sec).forEach(function(b){ b.disabled = !!n; });
+    $$('.need', sec).forEach(function(h){ h.textContent = n; });
+  });
+  renderNav();
+}
+$$('.next').forEach(function(b){ b.addEventListener('click', function(){ go(S.step + 1); }); });
+$('wsBtn').addEventListener('click', function(){ $('wsModal').classList.add('on'); });
+$('wsClose').addEventListener('click', function(){ $('wsModal').classList.remove('on'); });
+
+/* ---------- 0 Start: Wegwahl, Laborfreigabe, Wiederholung ---------- */
+$$('.mode button').forEach(function(b){ b.addEventListener('click', function(){
+  S.mode = b.dataset.m; S.ok.mode = true;
+  $$('.mode button').forEach(function(x){ x.classList.toggle('sel', x === b); });
+  $('freiBox').style.display = S.mode === 'home' ? '' : 'none'; refresh();
+}); });
+function applyMode() {
+  var lab = S.mode === 'lab' || S.forceLab;
+  $$('.home').forEach(function(h){ h.style.display = lab ? 'none' : ''; });
+  $$('.labhint').forEach(function(h){ h.style.display = lab ? '' : 'none'; });
+  placeLab(); renderTab(1); renderTab(2);
+}
+function switchLab() { S.forceLab = true; if (!S.ok.aw1 && S.src1 === 'home') { S.d1 = {}; S.src1 = null; } if (!S.ok.aw2 && S.src2 === 'home') { S.d2 = {}; S.src2 = null; } applyMode(); evalAw1(); evalAw2(); }
+$$('.toLab').forEach(function(b){ b.addEventListener('click', switchLab); });
+
+mc($('f1'), { q: 'Welches Gefäß verwendest du für den geschlossenen Versuch?', opts: [
+  { t: 'Eine leere PET-Flasche, in der vorher Sprudel war.', ok: true, fb: 'Richtig: Sprudelflaschen sind für Druck gebaut.' },
+  { t: 'Ein Marmeladenglas mit fest zugedrehtem Deckel.', fb: 'Glas kann durch den Gasdruck platzen. Nimm eine PET-Sprudelflasche.' },
+  { t: 'Eine dünne Plastikflasche für stilles Wasser.', fb: 'Flaschen für stilles Wasser halten weniger Druck aus. Nimm eine Sprudelflasche.' }], onOk: function(){ S.okF1 = true; freiCheck(); } });
+mc($('f2'), { q: 'Wie öffnest du die verschlossene Flasche nach dem Versuch?', opts: [
+  { t: 'Langsam über der Spüle, Öffnung vom Gesicht weg.', ok: true, fb: 'Richtig: So entweicht das Gas kontrolliert.' },
+  { t: 'Vorher kräftig schütteln, dann zügig aufdrehen.', fb: 'Schütteln erhöht den Druck. Der Inhalt kann herausspritzen.' },
+  { t: 'Schnell aufdrehen und dabei von oben hineinsehen.', fb: 'Essig kann herausspritzen. Öffnung immer vom Gesicht weg.' }], onOk: function(){ S.okF2 = true; freiCheck(); } });
+mc($('f3'), { q: 'Wie viel Backpulver gibst du pro Versuch in die 1,5-L-Flasche?', opts: [
+  { t: 'Ein Päckchen, mehr ist nicht erlaubt.', ok: true, fb: 'Richtig: Ein Päckchen reicht für eine gut messbare Gasmenge.' },
+  { t: 'Zwei Päckchen, damit man mehr Gas sieht.', fb: 'Mehr Backpulver bedeutet mehr Druck in der Flasche. Ein Päckchen reicht.' },
+  { t: 'So viel, bis die Flasche halb voll ist.', fb: 'Viel zu viel: Der Druck würde gefährlich hoch.' }], onOk: function(){ S.okF3 = true; freiCheck(); } });
+function freiCheck() { S.ok.frei = S.okF1 && S.okF2 && S.okF3; }
+
+mc($('r1'), { q: 'Woran erkennst du, dass bei Backpulver und Essig eine chemische Reaktion abläuft?', opts: [
+  { t: 'Es entsteht ein neuer Stoff: ein Gas, das vorher nicht da war.', ok: true, fb: 'Richtig: Bei einer chemischen Reaktion entstehen neue Stoffe mit neuen Eigenschaften.' },
+  { t: 'Das Backpulver verteilt sich im Essig wie Zucker im Tee.', fb: 'Lösen ist keine chemische Reaktion. Was ist beim Sprudeln neu entstanden?' },
+  { t: 'Die Flüssigkeit bewegt sich, weil man die Flasche schwenkt.', fb: 'Bewegung allein zeigt keine Reaktion. Achte auf neue Stoffe.' }], onOk: function(){ S.ok.r1 = true; } });
+mc($('r2'), { q: 'Wasser lässt sich im Hofmann-Apparat in Wasserstoff und Sauerstoff zerlegen. Was ist Wasser demnach?', opts: [
+  { t: 'Eine Verbindung, weil man den Stoff chemisch zerlegen kann.', ok: true, fb: 'Richtig: Verbindungen lassen sich chemisch zerlegen, Elemente nicht.' },
+  { t: 'Ein Element, weil Wasser ein Reinstoff aus einer Teilchensorte ist.', fb: 'Elemente lassen sich nicht zerlegen. Wasser aber schon.' },
+  { t: 'Ein Stoffgemisch, weil bei der Zerlegung zwei Gase entstehen.', fb: 'Ein Stoffgemisch trennt man physikalisch. Wasser wurde chemisch zerlegt.' }], onOk: function(){ S.ok.r2 = true; } });
+mc($('r3'), { q: 'Was passiert nach Dalton mit den Atomen bei einer chemischen Reaktion?', opts: [
+  { t: 'Sie werden umgruppiert, und ihre Anzahl bleibt dabei gleich.', ok: true, fb: 'Richtig: Atome werden weder zerstört noch neu erzeugt.' },
+  { t: 'Sie verwandeln sich dabei in Atome eines anderen Elements.', fb: 'Atome eines Elements bleiben Atome dieses Elements.' },
+  { t: 'Sie werden zuerst zerstört und danach wieder neu erzeugt.', fb: 'Atome werden nicht zerstört und nicht neu erzeugt.' }], onOk: function(){ S.ok.r3 = true; } });
+
+/* ---------- 1 Hypothese ---------- */
+function h1chk() { $('h1fix').disabled = !($('h1dir').value && $('h1why').value) || !!S.h1; }
+$('h1dir').addEventListener('change', h1chk); $('h1why').addEventListener('change', h1chk);
+$('h1fix').addEventListener('click', function(){
+  S.h1 = { dir: $('h1dir').value, why: $('h1why').value }; S.ok.h1 = true;
+  $('h1dir').disabled = $('h1why').disabled = true; $('h1fix').disabled = true; $('h1box').classList.add('fix');
+  $('h1msg').textContent = '✓ Festgelegt. Jetzt entscheidet das Experiment.'; refresh();
+});
+function h1text() { return 'Ich vermute, dass die Masse nach der Reaktion ' + (S.h1.dir === 'gleich' ? 'gleich groß' : S.h1.dir) + ' ist, ' + S.h1.why; }
+function h2text() { return 'Wenn das Gas eine Masse hat und nicht entweichen kann, dann ist die Masse nach der Reaktion ' + (S.h2 === 'gleich' ? 'gleich groß' : S.h2) + '.'; }
+
+/* ---------- Digitales Labor ---------- */
+var IT = {
+  kueche: { g: 'scale', t: 'Küchenwaage (1 g genau)', res: 1 },
+  fein: { g: 'scale', t: 'Feinwaage (0,1 g genau)', res: 0.1 },
+  glas: { g: 'cont', t: 'Trinkglas', m: 245.0 },
+  flasche: { g: 'cont', t: 'PET-Sprudelflasche 1,5 L', m: 31.4 },
+  schraub: { g: 'cont', t: 'Marmeladenglas', m: 212.0 },
+  deckel: { g: 'clo', t: 'Schraubdeckel', m: 2.3 },
+  ballon: { g: 'clo', t: 'Luftballon', m: 2.8 },
+  essig: { g: 'liq', t: 'Essig (100 mL)', m: 101.0 },
+  wasser: { g: 'liq', t: 'Wasser (100 mL)', m: 100.0 },
+  backpulver: { g: 'sol', t: 'Backpulver (1 Päckchen)', m: 15.0 },
+  brause: { g: 'sol', t: 'Brausetablette', m: 4.4 },
+  salz: { g: 'sol', t: 'Kochsalz (2 Teelöffel)', m: 10.0 },
+  pk: { g: 'pk', t: 'Küchenpapier-Päckchen', m: 0.9 }
+};
+var GROUPS = [['scale', 'Waagen'], ['cont', 'Gefäße'], ['clo', 'Verschlüsse'], ['liq', 'Flüssigkeiten'], ['sol', 'Feststoffe'], ['pk', 'Hilfsmittel']];
+var L = { scale: null, cont: null, clo: null, liq: null, sol: null, pk: false, phase: 'aufbau', lens: false, run: null };
+var RUNS = [];
+function gas() { if (!L.liq || !L.sol) return 0; if (L.sol === 'backpulver') return L.liq === 'essig' ? 2.3 : 1.4; if (L.sol === 'brause') return 0.65; return 0; }
+function baseMass() { var m = 0; ['cont', 'clo', 'liq', 'sol'].forEach(function(k){ if (L[k]) m += IT[L[k]].m; }); if (L.pk) m += IT.pk.m; return m; }
+function reacted() { return ['reagiert', 'offen', 'zufrueh'].indexOf(L.phase) >= 0; }
+function trueMass() {
+  var m = baseMass(), G = gas();
+  if (L.phase === 'offen') return m - 0.85 * G;
+  if (!reacted()) return m;
+  if (L.clo === 'deckel') return m;
+  if (L.clo === 'ballon') return m - 0.59 * G; /* Auftrieb des aufgeblähten Ballons */
+  return m - 0.9 * G;
+}
+function res() { return L.scale ? IT[L.scale].res : 1; }
+function shown() { var r = res(); return Math.round(trueMass() / r) * r; }
+function showStr() { return L.scale ? fmt(shown(), res()) + ' g' : ''; }
+function sysType() { if (!L.cont || L.cont === 'schraub') return null; if (!L.clo) return 'offen'; if (L.clo === 'deckel' && L.cont === 'flasche') return 'zu'; if (L.clo === 'ballon') return 'ballon'; return null; }
+function setupText() {
+  var p = [];
+  if (L.cont) p.push(IT[L.cont].t + (L.clo ? ' mit ' + IT[L.clo].t : ' (offen)'));
+  if (L.liq) p.push(IT[L.liq].t); if (L.sol) p.push(IT[L.sol].t + (L.pk ? ' im Papier-Päckchen' : ''));
+  if (L.scale) p.push(IT[L.scale].t);
+  return p.join(', ');
+}
+function msg(t, cls) { var m = $('labMsg'); m.className = 'labmsg ' + (cls || ''); m.innerHTML = t || ''; }
+
+function renderShelf() {
+  var h = '';
+  GROUPS.forEach(function(g){ h += '<h4>' + g[1] + '</h4>'; Object.keys(IT).forEach(function(k){ if (IT[k].g !== g[0]) return;
+    var on = g[0] === 'pk' ? L.pk : L[g[0]] === k; h += '<button data-k="' + k + '" class="' + (on ? 'on' : '') + '">' + IT[k].t + '</button>'; }); });
+  $('shelf').innerHTML = h;
+  $$('#shelf button').forEach(function(b){ b.addEventListener('click', function(){ pick(b.dataset.k); }); });
+}
+function pick(k) {
+  var g = IT[k].g;
+  if (L.phase === 'laeuft') return;
+  if (g === 'scale') { L.scale = L.scale === k ? null : k; return update(); }
+  if (L.phase !== 'aufbau' && L.phase !== 'bereit') { msg('Der Versuch ist schon gelaufen. Tippe auf 🧹 <b>Alles abräumen</b>, um neu aufzubauen.', 'warn'); return; }
+  if (g === 'cont') { L.cont = L.cont === k ? null : k; if (L.clo === 'ballon' && L.cont !== 'flasche') L.clo = null; if (L.cont === 'glas') L.clo = null; }
+  else if (g === 'clo') {
+    if (!L.cont) { msg('Stelle zuerst ein Gefäß auf.', 'warn'); return; }
+    if (L.cont === 'glas') { msg('Ein Trinkglas kann man nicht verschließen. Nimm ein anderes Gefäß.', 'warn'); return; }
+    if (k === 'ballon' && L.cont !== 'flasche') { msg('Der Ballon passt nur auf den Flaschenhals.', 'warn'); return; }
+    L.clo = L.clo === k ? null : k;
+  }
+  else if (g === 'liq') { if (!L.cont) { msg('Stelle zuerst ein Gefäß auf.', 'warn'); return; } L.liq = L.liq === k ? null : k; }
+  else if (g === 'sol') { if (!L.cont) { msg('Stelle zuerst ein Gefäß auf.', 'warn'); return; } L.sol = L.sol === k ? null : k; }
+  else if (g === 'pk') { L.pk = !L.pk; }
+  update(true);
+}
+function update(changed) {
+  if (changed && (L.phase === 'aufbau' || L.phase === 'bereit')) {
+    L.run = null;
+    if (L.liq && L.sol && !L.pk && gas() > 0) { L.phase = 'zufrueh'; msg('Oh! Das ' + (L.sol === 'brause' ? 'Brausetablette' : 'Backpulver') + ' fällt direkt in die Flüssigkeit und sprudelt sofort. Den Wert <b>vorher</b> kannst du jetzt nicht mehr messen. Räume ab und überlege, wie du die Stoffe getrennt halten kannst.', 'warn'); }
+    else if (L.cont && L.liq && L.sol && L.pk) { L.phase = 'bereit'; msg(L.scale ? 'Aufbau fertig. Notiere den Wert <b>vorher</b> (📝) und starte dann die Reaktion.' : 'Aufbau fertig. Aber womit willst du die Masse messen?', L.scale ? 'good' : 'warn'); }
+    else { L.phase = 'aufbau';
+      if (L.liq && L.sol && !L.pk) msg('Tipp: Wenn du den Feststoff in ein Papier-Päckchen legst, kannst du alles wiegen, bevor die Reaktion startet.');
+      else msg(''); }
+  }
+  renderShelf(); draw(); buttons();
+}
+function buttons() {
+  $('bStart').disabled = L.phase !== 'bereit';
+  $('bOpen').disabled = !(L.phase === 'reagiert' && (L.clo === 'deckel' || L.clo === 'ballon'));
+  $('bNote').disabled = !L.scale || !(L.phase === 'bereit' || L.phase === 'reagiert' || L.phase === 'offen');
+  $('bLens').classList.toggle('sel', L.lens); $('bLens').style.fontWeight = L.lens ? '700' : '';
+}
+$('bNote').addEventListener('click', function(){
+  if (!L.scale) return;
+  if (!L.run) { L.run = { setup: setupText(), type: sysType(), sol: L.sol, liq: L.liq, cont: L.cont, clo: L.clo, scale: L.scale, res: res(), a: null, b: null, c: null }; RUNS.push(L.run); }
+  if (L.run.scale !== L.scale) { msg('Du hast die Waage gewechselt. Räume ab und beginne mit einer Waage neu, sonst sind die Werte nicht vergleichbar.', 'warn'); return; }
+  var v = shown(), f = L.phase === 'bereit' ? 'a' : (L.phase === 'reagiert' ? 'b' : 'c');
+  L.run[f] = v; msg('📝 Notiert: ' + fmt(v, res()) + ' g (' + { a: 'vorher', b: 'nach der Reaktion', c: 'nach dem Öffnen' }[f] + ').', 'good');
+  renderLog(); labToData(); });
+$('bStart').addEventListener('click', function(){
+  if (L.cont === 'schraub' && L.clo === 'deckel' && gas() > 0) { msg('⚠ <b>Stopp!</b> Im verschlossenen Glas baut das Gas Druck auf. Glas kann dabei platzen und Splitter fliegen. In echt niemals machen. Nimm eine PET-Sprudelflasche.', 'warn'); return; }
+  if (L.scale && (!L.run || L.run.a === null)) { msg('Halt: Du hast den Wert <b>vorher</b> noch nicht notiert. Ohne ihn kannst du nichts vergleichen.', 'warn'); return; }
+  L.phase = 'laeuft'; buttons(); draw(); msg(gas() > 0 ? 'Das Päckchen fällt in die Flüssigkeit … es sprudelt.' : 'Das Päckchen fällt in die Flüssigkeit …');
+  setTimeout(function(){ L.phase = 'reagiert'; draw(); buttons();
+    var G = gas(), t;
+    if (G === 0) t = 'Fertig. Das Salz hat sich gelöst. Es hat nicht gesprudelt.';
+    else if (L.clo === 'deckel') t = 'Fertig. Die Flasche ist prall und fest. Notiere den Wert nach der Reaktion.';
+    else if (L.clo === 'ballon') t = 'Fertig. Der Ballon hat sich aufgebläht. Notiere den Wert.';
+    else t = 'Fertig. Es sprudelt nicht mehr. Notiere den Wert nach der Reaktion.';
+    msg(t, 'good'); }, 2600);
+});
+$('bOpen').addEventListener('click', function(){
+  if (L.clo === 'ballon') { msg('Den Ballon nimmst du hier nicht ab. Er gehört zum System. Beobachte lieber die Anzeige genau.', 'warn'); return; }
+  L.phase = 'offen'; draw(); buttons(); msg('Pssst! Das Gas entweicht hörbar. Der Deckel liegt neben der Flasche auf der Waage. Notiere den Wert nach dem Öffnen.', 'good');
+});
+$('bLens').addEventListener('click', function(){ L.lens = !L.lens; draw(); buttons(); });
+$('bClear').addEventListener('click', function(){ L.cont = L.clo = L.liq = L.sol = null; L.pk = false; L.phase = 'aufbau'; L.run = null; msg('Arbeitsfläche ist leer. Die Waage bleibt stehen.'); update(); });
+
+function renderLog() {
+  if (!RUNS.length) { $('logTab').innerHTML = '<tr><td class="hint">Noch keine Messwerte notiert.</td></tr>'; return; }
+  var h = '<tr><th>#</th><th>Aufbau</th><th>vorher</th><th>nach Reaktion</th><th>nach Öffnen</th></tr>';
+  RUNS.forEach(function(r, i){ var f = function(v){ return v === null ? '–' : fmt(v, r.res) + ' g'; };
+    h += '<tr><td>' + (i + 1) + '</td><td style="text-align:left;font-size:.88rem">' + esc(r.setup) + '</td><td>' + f(r.a) + '</td><td>' + f(r.b) + '</td><td>' + f(r.c) + '</td></tr>'; });
+  $('logTab').innerHTML = h;
+}
+
+/* --- Zeichnung --- */
+function at(t, x, y, r) { var c = t === 'C' ? ['#4b5563', '#111827'] : ['#e5483b', '#9b2217']; return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c[0] + '" stroke="' + c[1] + '" stroke-width="1.2"/>'; }
+function co2(x, y, s) { s = s || 1; return at('O', x - 12 * s, y, 6.5 * s) + at('C', x, y, 6 * s) + at('O', x + 12 * s, y, 6.5 * s); }
+function bubbles(x0, x1, yb, yt, n) {
+  var g = ''; for (var i = 0; i < n; i++) { var x = x0 + (x1 - x0) * ((i * 37 % 100) / 100), d = (0.9 + (i % 5) * 0.25).toFixed(2), r = 2.5 + (i % 3);
+    g += '<circle cx="' + x + '" cy="' + yb + '" r="' + r + '" fill="#fff" fill-opacity=".85" stroke="#7aa7c7"><animate attributeName="cy" from="' + yb + '" to="' + yt + '" dur="' + d + 's" begin="' + (i * 0.13).toFixed(2) + 's" repeatCount="indefinite"/></circle>'; }
+  return g;
+}
+/* liefert SVG-Inhalt (ohne Rahmen) für einen Zustand */
+function scene(st) {
+  var g = '', ph = st.phase, re = ph === 'reagiert' || ph === 'offen' || ph === 'zufrueh', run = ph === 'laeuft', G = st.G;
+  var liqCol = st.liq === 'essig' ? '#f5e6a8' : '#bfe3f7';
+  /* Waage */
+  if (st.scale) {
+    g += '<rect x="110" y="322" width="300" height="10" rx="3" fill="#94a3b8"/><rect x="95" y="332" width="330" height="46" rx="9" fill="#cbd5e1" stroke="#94a3b8"/>' +
+      '<rect x="200" y="341" width="120" height="28" rx="4" fill="#0f172a"/><text x="260" y="361" text-anchor="middle" font-family="monospace" font-size="19" fill="#4ade80">' + (run ? '…' : st.display) + '</text>' +
+      '<text x="108" y="370" font-size="11" fill="#475569">' + (st.scale === 'fein' ? 'Feinwaage' : 'Küchenwaage') + '</text>';
+  } else g += '<rect x="80" y="322" width="360" height="8" fill="#e2d5c3"/><text x="260" y="352" text-anchor="middle" font-size="13" fill="#94a3b8">(Tisch: keine Waage aufgestellt)</text>';
+  var y0 = 322, gasTop = 0, sysTop = 0, cx = 260;
+  /* Gefäß */
+  if (st.cont === 'glas') {
+    if (st.liq) g += '<path d="M206 262 H314 L306 ' + y0 + ' H214 Z" fill="' + liqCol + '"/>';
+    g += '<path d="M200 182 L212 ' + y0 + ' H308 L320 182" fill="none" stroke="#44617f" stroke-width="3"/>';
+    gasTop = 182; sysTop = 170;
+  } else if (st.cont === 'flasche') {
+    if (st.liq) g += '<rect x="217" y="280" width="86" height="40" fill="' + liqCol + '"/>';
+    g += '<path d="M249 118 V150 Q216 160 216 186 V312 Q216 ' + y0 + ' 224 ' + y0 + ' H296 Q304 ' + y0 + ' 304 312 V186 Q304 160 271 150 V118" fill="#eaf4fb" fill-opacity=".35" stroke="#44617f" stroke-width="3"/>';
+    g += '<rect x="246" y="118" width="28" height="5" fill="#44617f"/>';
+    gasTop = 118; sysTop = 100;
+  } else if (st.cont === 'schraub') {
+    if (st.liq) g += '<rect x="208" y="272" width="104" height="48" rx="6" fill="' + liqCol + '"/>';
+    g += '<rect x="205" y="196" width="110" height="126" rx="14" fill="#eaf4fb" fill-opacity=".35" stroke="#44617f" stroke-width="3"/>';
+    gasTop = 196; sysTop = 180;
+  }
+  /* Verschluss */
+  var ballR = 0;
+  if (st.clo === 'deckel') {
+    if (ph === 'offen') g += '<rect x="330" y="306" width="30" height="14" rx="3" fill="#2563eb" stroke="#1e3a8a"/>';
+    else if (st.cont === 'flasche') g += '<rect x="243" y="104" width="34" height="18" rx="3" fill="#2563eb" stroke="#1e3a8a"/>';
+    else if (st.cont === 'schraub') g += '<rect x="210" y="182" width="100" height="16" rx="4" fill="#9ca3af" stroke="#4b5563"/>';
+    if (st.cont === 'flasche' && ph !== 'offen') sysTop = 96;
+  } else if (st.clo === 'ballon') {
+    ballR = re ? 14 + 30 * Math.min(1, G / 2.3) : (run ? 22 : 9);
+    g += '<rect x="246" y="104" width="28" height="18" rx="4" fill="#ec4899"/><ellipse cx="260" cy="' + (104 - ballR * 0.95) + '" rx="' + ballR + '" ry="' + (ballR * 1.05) + '" fill="#f472b6" fill-opacity=".85" stroke="#be185d" stroke-width="2"/>';
+    sysTop = 104 - ballR * 2 - 8;
+  }
+  /* Feststoff / Päckchen */
+  var solCol = st.sol === 'brause' ? '#fde68a' : '#f8fafc';
+  if (st.sol && st.cont) {
+    var inLiq = re || run;
+    if (st.pk && !inLiq) {
+      var px = st.cont === 'glas' ? 296 : 250, py = st.cont === 'glas' ? 168 : (st.cont === 'flasche' ? 160 : 210);
+      if (st.cont === 'glas') g += '<line x1="318" y1="182" x2="310" y2="172" stroke="#94a3b8" stroke-width="2"/>';
+      g += '<rect x="' + px + '" y="' + py + '" width="20" height="38" rx="5" fill="#fff" stroke="#9ca3af" stroke-width="1.5"/><text x="' + (px + 10) + '" y="' + (py + 24) + '" text-anchor="middle" font-size="9" fill="#64748b">' + (st.sol === 'brause' ? 'Tab' : st.sol === 'salz' ? 'Salz' : 'BP') + '</text>';
+    } else if (st.pk && inLiq) {
+      g += '<path d="M240 ' + (y0 - 3) + ' q10 -9 20 -2 q10 -7 22 0 Z" fill="#e5e7eb" stroke="#9ca3af"/>';
+    } else if (!st.pk && inLiq) {
+      g += '<ellipse cx="' + cx + '" cy="' + (y0 - 5) + '" rx="26" ry="5" fill="' + solCol + '" stroke="#cbd5e1"/>';
+    } else if (!st.pk) {
+      g += '<text x="' + (cx + 70) + '" y="' + (y0 - 6) + '" font-size="11" fill="#64748b">(' + IT[st.sol].t + ' liegt bereit)</text>';
+    }
+  }
+  /* Sprudeln */
+  if (G > 0 && st.liq && st.sol && (run || ph === 'zufrueh')) {
+    var yb = y0 - 6, yt = st.cont === 'glas' ? 264 : (st.cont === 'flasche' ? 282 : 274);
+    g += bubbles(cx - 36, cx + 36, yb, yt, 14);
+  }
+  /* entweichendes Gas (offen) */
+  if (G > 0 && (run || re) && !st.clo && st.cont && !st.lens) {
+    var gt = st.cont === 'glas' ? 170 : 110;
+    for (var i = 0; i < 3; i++) g += '<path d="M' + (cx - 30 + i * 30) + ' ' + gt + ' q-8 -12 0 -24 q8 -12 0 -24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 3"/>';
+    g += '<text x="' + (cx + 50) + '" y="' + (gt - 30) + '" font-size="13" fill="#64748b">Gas entweicht</text>';
+  }
+  if (ph === 'offen' && G > 0 && !st.lens) { g += '<text x="300" y="96" font-size="15" font-weight="700" fill="#64748b">pssst …</text>'; }
+  /* Teilchenbrille */
+  if (st.lens && st.cont && G > 0) {
+    var n = G >= 2 ? 6 : (G >= 1 ? 4 : 2), sysT = Math.min(sysTop, 150), inside = n, k;
+    g += '<rect x="88" y="' + sysT + '" width="344" height="' + (382 - sysT) + '" rx="12" fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="7 5"/>' +
+      '<text x="96" y="' + (sysT + 16) + '" font-size="12" font-weight="700" fill="#7c3aed">System</text>';
+    if (!re && !run) {
+      /* gebunden im Feststoff: Atome als Gruppe */
+      var bx = 372, by = 250;
+      if (st.pk) { var qx = st.cont === 'glas' ? 306 : 260, qy = st.cont === 'glas' ? 187 : (st.cont === 'flasche' ? 179 : 229); g += '<line x1="' + qx + '" y1="' + qy + '" x2="' + (bx - 34) + '" y2="' + (by - 10) + '" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 3"/>'; }
+      for (k = 0; k < n; k++) { var ax = bx - 30 + (k % 3) * 22, ay = by - Math.floor(k / 3) * 22; g += at('C', ax, ay, 5) + at('O', ax + 8, ay - 6, 5) + at('O', ax + 8, ay + 6, 5); }
+      g += '<text x="' + (bx - 8) + '" y="' + (by + 24) + '" text-anchor="middle" font-size="11" fill="#7c3aed">im Backpulver</text><text x="' + (bx - 8) + '" y="' + (by + 37) + '" text-anchor="middle" font-size="11" fill="#7c3aed">gebunden</text>';
+    } else {
+      var out = 0;
+      if (!st.clo && (re || run)) out = n - 1;
+      if (ph === 'offen') out = n - 1;
+      inside = n - out;
+      var slots = [], BODY = [[238, 200], [282, 200], [260, 230], [238, 258], [282, 258], [260, 175]];
+      if (st.clo === 'ballon') {
+        var bcy = 104 - ballR * 0.95, inB = ballR >= 30 ? Math.ceil(inside / 2) : 1, BALL = ballR >= 30 ? [[242, bcy - 12], [278, bcy - 12], [260, bcy + 14]] : [[260, bcy]];
+        for (k = 0; k < inside; k++) slots.push(k < inB ? BALL[k] : BODY[k - inB]);
+      } else if (st.cont === 'glas') { for (k = 0; k < inside; k++) slots.push([cx - 20 + k * 20, 300]); }
+      else if (st.cont === 'schraub') { for (k = 0; k < inside; k++) slots.push([236 + (k % 2) * 48, 222 + Math.floor(k / 2) * 26]); }
+      else { for (k = 0; k < inside; k++) slots.push(BODY[k]); }
+      slots.forEach(function(p){ g += co2(p[0], p[1], 0.9); });
+      for (k = 0; k < out; k++) g += co2(140 + k * 60 + (k % 2) * 10, Math.max(20, sysT - 30 - (k % 2) * 26), 0.9);
+    }
+    g += '<rect x="330" y="' + (sysT + 4) + '" width="96" height="40" rx="6" fill="#f5f3ff" stroke="#c4b5fd"/><text x="378" y="' + (sysT + 20) + '" text-anchor="middle" font-size="11" fill="#5b21b6">Atome im System</text>' +
+      '<text x="378" y="' + (sysT + 37) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#5b21b6">C: ' + inside + ' · O: ' + (2 * inside) + '</text>';
+  } else if (st.lens && st.cont && st.sol === 'salz') {
+    g += '<text x="260" y="60" text-anchor="middle" font-size="13" fill="#7c3aed">Kochsalz bildet kein Gas: Hier wird nichts umgruppiert, das Salz löst sich nur.</text>';
+  }
+  if (!st.cont) g += '<text x="260" y="200" text-anchor="middle" font-size="15" fill="#94a3b8">Arbeitsfläche: Wähle links Geräte und Stoffe aus.</text>';
+  return g;
+}
+function state() { return { phase: L.phase, scale: L.scale, cont: L.cont, clo: L.clo, liq: L.liq, sol: L.sol, pk: L.pk, lens: L.lens, G: gas(), display: showStr() }; }
+function draw() { $('labSvg').innerHTML = '<rect x="1" y="1" width="518" height="388" rx="12" fill="#fff" stroke="#c9d6e4"/>' + scene(state()); }
+
+/* --- Messwerte aus dem Labor in die Auswertung übernehmen --- */
+function lastRun(pred) { for (var i = RUNS.length - 1; i >= 0; i--) if (pred(RUNS[i])) return RUNS[i]; return null; }
+function labToData() {
+  if (!(S.mode === 'lab' || S.forceLab)) return;
+  var r1 = lastRun(function(r){ return r.type === 'offen' && r.sol !== 'salz' && r.a !== null && r.b !== null && r.b < r.a; }) || lastRun(function(r){ return r.type === 'offen' && r.sol !== 'salz' && r.a !== null && r.b !== null; });
+  if (r1 && S.max < 3) { S.d1 = { a: r1.a, b: r1.b, res: r1.res, setup: r1.setup }; S.src1 = 'lab'; }
+  var r2 = lastRun(function(r){ return r.type === 'zu' && r.sol !== 'salz' && r.a !== null && r.b !== null && r.c !== null && r.c < r.b; }) || lastRun(function(r){ return r.type === 'zu' && r.sol !== 'salz' && r.a !== null && r.b !== null; });
+  if (r2 && S.max < 4) { S.d2 = { a: r2.a, b: r2.b, c: r2.c, res: r2.res, setup: r2.setup }; S.src2 = 'lab'; }
+  renderTab(1); renderTab(2); evalAw1(); evalAw2();
+}
+
+/* ---------- Messtabellen (zu Hause: eintippen, Labor: automatisch) ---------- */
+function renderTab(n) {
+  var el = $('tab' + n); if (!el) return;
+  var lab = S.mode === 'lab' || S.forceLab, d = n === 1 ? S.d1 : S.d2;
+  var cols = n === 1 ? [['a', 'vorher'], ['b', 'nachher']] : [['a', 'vorher'], ['b', 'nach der Reaktion'], ['c', 'nach dem Öffnen']];
+  var h = '';
+  if (!lab) {
+    h += '<p class="hint">Trage deine Messwerte von zu Hause ein (in Gramm, z. B. 150 oder 150,5).</p><table class="t"><tr>' + cols.map(function(c){ return '<th>' + c[1] + '</th>'; }).join('') + '</tr><tr>' +
+      cols.map(function(c){ return '<td><input class="inp hin" data-n="' + n + '" data-f="' + c[0] + '" value="' + (d[c[0]] != null && (n === 1 ? S.src1 : S.src2) === 'home' ? fmt(d[c[0]], 0.1) : '') + '"> g</td>'; }).join('') + '</tr></table>';
+  } else {
+    var ok = n === 1 ? (S.src1 === 'lab') : (S.src2 === 'lab');
+    if (!ok) h += '<p class="hint">Noch kein passender Versuch im Laborbuch. ' + (n === 1 ? 'Gesucht: offenes Gefäß, Reaktion mit Gas, Werte vorher und nachher notiert.' : 'Gesucht: verschlossene PET-Flasche, Werte vorher und nach der Reaktion notiert (dann auch nach dem Öffnen).') + '</p>';
+    else h += '<p class="hint">Übernommen aus deinem Laborbuch: ' + esc(d.setup) + '</p><table class="t"><tr>' + cols.map(function(c){ return '<th>' + c[1] + '</th>'; }).join('') + '</tr><tr>' + cols.map(function(c){ return '<td>' + (d[c[0]] != null ? fmt(d[c[0]], d.res) + ' g' : '–') + '</td>'; }).join('') + '</tr></table>';
+  }
+  el.innerHTML = h;
+  $$('.hin', el).forEach(function(inp){ inp.addEventListener('input', function(){
+    var dd = n === 1 ? S.d1 : S.d2; dd[inp.dataset.f] = num(inp.value); dd.res = 1; dd.setup = 'zu Hause: PET-Sprudelflasche, Essig (ca. 100 mL), 1 Päckchen Backpulver im Küchenpapier, Küchenwaage';
+    if (n === 1) S.src1 = 'home'; else S.src2 = 'home'; evalAw1(); evalAw2(); }); });
+}
+function labTip() { return (S.mode === 'lab' || S.forceLab) ? 'Baue im Labor neu auf und probiere eine andere Waage oder einen anderen Stoff.' : 'Wiederhole den Versuch oder <button class="toLab2">💻 wechsle ins digitale Labor</button>.'; }
+function dirOf(a, b, tol) { if (a == null || b == null) return null; var d = b - a; if (Math.abs(d) <= tol + 1e-9) return 'gleich'; return d < 0 ? 'kleiner' : 'größer'; }
+
+/* ---------- 2 Experiment offen ---------- */
+var e2 = false;
+function enter2() {
+  $('h1show').innerHTML = '<b>Meine Hypothese 1:</b> ' + esc(h1text());
+  if (e2) return; e2 = true;
+  ['aw1a', 'aw1b'].forEach(function(id){ $(id).addEventListener('change', evalAw1); });
+  mc($('wohin'), { q: 'Die Waage zeigt nach der Reaktion weniger an. Was ist die beste Erklärung?', opts: [
+    { t: 'Das entstandene Gas hat eine Masse und ist aus dem Gefäß entwichen.', ok: true, fb: 'Richtig. Das ist eine neue Hypothese. Im nächsten Schritt prüfst du sie.' },
+    { t: 'Bei der Reaktion ist ein Teil der Stoffe einfach verschwunden.', fb: 'Stoffe verschwinden nicht einfach. Wohin ist das Gas gegangen?' },
+    { t: 'Gase haben keine Masse, deshalb fehlt dieser Anteil jetzt.', fb: 'Wenn Gase keine Masse hätten, warum fehlt dann genau dann etwas, wenn Gas entweicht?' }],
+    tip: 'Denke an das Sprudeln: Was ist aus dem offenen Gefäß herausgekommen?', onOk: function(){ S.ok.wohin = true; } });
+}
+function evalAw1() {
+  var d = S.d1, fb = $('aw1fb'), a = $('aw1a'), b = $('aw1b');
+  S.ok.d1 = d.a != null && d.b != null; S.ok.aw1 = false;
+  if (!S.ok.d1) { fb.className = 'fb'; fb.textContent = 'Zuerst brauchst du Messwerte vorher und nachher.'; refresh(); return; }
+  var obs = dirOf(d.a, d.b, 0);
+  if (obs !== 'kleiner') { S.ok.d1 = false; fb.className = 'fb bad'; fb.innerHTML = 'Deine Werte zeigen keine Abnahme. Mögliche Gründe: zu wenig Backpulver, Waage zu ungenau, nicht lange genug gewartet, ein Wert vertippt. ' + labTip(); $$('.toLab2', fb).forEach(function(x){ x.addEventListener('click', switchLab); }); refresh(); return; }
+  var res1 = '';
+  [a, b].forEach(function(s){ s.classList.remove('ok', 'no'); });
+  if (a.value) a.classList.add(a.value === obs ? 'ok' : 'no');
+  var hyp = S.h1 && S.h1.dir === obs ? 'bestätigt' : 'widerlegt';
+  if (b.value) b.classList.add(b.value === hyp ? 'ok' : 'no');
+  if (!a.value || !b.value) res1 = '';
+  else if (a.value !== obs) res1 = '✗ Vergleiche die beiden Zahlen in deiner Tabelle noch einmal.';
+  else if (b.value !== hyp) res1 = '✗ Du hattest vermutet: „' + (S.h1.dir === 'gleich' ? 'gleich groß' : S.h1.dir) + '“. Stimmt das mit der Messung überein?';
+  else { S.ok.aw1 = true; res1 = '✓ Richtig ausgewertet. Die Masse hat um ' + fmt(d.a - d.b, d.res) + ' g abgenommen.' + (hyp === 'widerlegt' ? ' Eine widerlegte Hypothese ist kein Fehler: Du hast etwas Neues herausgefunden.' : ''); }
+  fb.className = 'fb ' + (S.ok.aw1 ? 'good' : 'bad'); fb.textContent = res1; refresh();
+}
+
+/* ---------- 3 Experiment geschlossen ---------- */
+var e3 = false;
+function enter3() {
+  if (e3) return; e3 = true;
+  mc($('plan'), { q: 'Planung: Wie musst du das Experiment verändern, um zu prüfen, ob das Gas eine Masse hat?', opts: [
+    { t: 'Die Flasche sofort verschließen, damit das Gas drinbleibt.', ok: true, fb: 'Richtig: In einem geschlossenen System kann kein Gas entweichen.' },
+    { t: 'Mehr Backpulver nehmen, damit noch mehr Gas entsteht.', fb: 'Dann entweicht nur noch mehr Gas. Du musst das Gas festhalten.' },
+    { t: 'Die Flasche länger stehen lassen, bis alles abgekühlt ist.', fb: 'Warten ändert nichts daran, dass das Gas entweicht.' }], onOk: function(){ S.ok.plan = true; $('h2box').style.display = ''; } });
+  function h2chk() { $('h2fix').disabled = !$('h2dir').value || !!S.h2; }
+  $('h2dir').addEventListener('change', h2chk);
+  $('h2fix').addEventListener('click', function(){ S.h2 = $('h2dir').value; S.ok.h2 = true; $('h2dir').disabled = true; $('h2fix').disabled = true; $('h2box').classList.add('fix');
+    $('h2msg').textContent = '✓ Festgelegt. Jetzt experimentierst du.'; $('exp2').style.display = ''; $('aw2card').style.display = ''; applyMode(); refresh(); });
+  ['aw2a', 'aw2b', 'aw2c'].forEach(function(id){ $(id).addEventListener('change', evalAw2); });
+  mc($('oeffnen'), { q: 'Nach dem Öffnen zeigt die Waage weniger an. Was beweist das?', opts: [
+    { t: 'Das Gas war die ganze Zeit in der Flasche und hat mitgewogen.', ok: true, fb: 'Richtig: Erst beim Öffnen entweicht es, und erst dann fehlt seine Masse.' },
+    { t: 'Beim Öffnen reagieren die Stoffe in der Flasche noch einmal.', fb: 'Die Reaktion war schon vorbei. Was ist beim Öffnen hinausgezischt?' },
+    { t: 'Der Deckel liegt jetzt neben der Flasche und wiegt weniger.', fb: 'Der Deckel liegt weiter auf der Waage. Was hat das System verlassen?' }], onOk: function(){ S.ok.oeffnen = true; } });
+}
+function evalAw2() {
+  if (!$('aw2a')) return;
+  var d = S.d2, fb = $('aw2fb'), a = $('aw2a'), b = $('aw2b'), c = $('aw2c');
+  S.ok.d2 = d.a != null && d.b != null && d.c != null; S.ok.aw2 = false;
+  if (!S.ok.d2) { fb.className = 'fb'; fb.textContent = 'Zuerst brauchst du alle drei Messwerte.'; refresh(); return; }
+  var tol = S.src2 === 'home' ? 1 : 0, o1 = dirOf(d.a, d.b, tol), o2 = dirOf(d.b, d.c, 0);
+  if (o1 !== 'gleich' || o2 !== 'kleiner') { S.ok.d2 = false; fb.className = 'fb bad';
+    fb.innerHTML = (o1 !== 'gleich' ? 'Im geschlossenen Versuch hat sich die Masse verändert. War der Deckel wirklich dicht? Hat es vor dem Öffnen schon gezischt? ' : 'Nach dem Öffnen hat die Masse nicht abgenommen. Hast du lange genug offen gelassen? ') + labTip();
+    $$('.toLab2', fb).forEach(function(x){ x.addEventListener('click', switchLab); }); refresh(); return; }
+  var hyp = S.h2 === 'gleich' ? 'bestätigt' : 'widerlegt';
+  [[a, 'gleich'], [b, 'kleiner'], [c, hyp]].forEach(function(p){ p[0].classList.remove('ok', 'no'); if (p[0].value) p[0].classList.add(p[0].value === p[1] ? 'ok' : 'no'); });
+  var t = '';
+  if (!a.value || !b.value || !c.value) t = '';
+  else if (a.value !== 'gleich') t = '✗ Vergleiche „vorher“ und „nach der Reaktion“.' + (tol ? ' Ein Unterschied von 1 g liegt bei einer Küchenwaage im Bereich der Messungenauigkeit.' : '');
+  else if (b.value !== 'kleiner') t = '✗ Vergleiche „nach der Reaktion“ und „nach dem Öffnen“.';
+  else if (c.value !== hyp) t = '✗ Du hattest vermutet: „' + (S.h2 === 'gleich' ? 'gleich groß' : S.h2) + '“. Passt das zur Messung?';
+  else { S.ok.aw2 = true; t = '✓ Richtig ausgewertet. Solange die Flasche zu war, blieb die Masse gleich. Beim Öffnen sind ' + fmt(d.b - d.c, d.res) + ' g Gas entwichen.'; }
+  fb.className = 'fb ' + (S.ok.aw2 ? 'good' : 'bad'); fb.textContent = t; refresh();
+}
+
+/* ---------- 4 Erklärung mit Atomen ---------- */
+var e4 = false;
+function frameSvg(inner, w, h, label) { return '<svg viewBox="0 0 ' + w + ' ' + h + '" class="wsvg" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">' + '<rect x="1" y="1" width="' + (w - 2) + '" height="' + (h - 2) + '" rx="10" fill="#fff" stroke="#8aa0b8" stroke-width="2"/>' + inner + (label ? '<text x="14" y="26" font-size="18" font-weight="700" fill="#12304f">' + label + '</text>' : '') + '</svg>'; }
+function stdScene(phase, clo, label, lens) { return '<svg viewBox="0 0 520 390" class="wsvg" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif"><rect x="1" y="1" width="518" height="388" rx="12" fill="#fff" stroke="#c9d6e4"/>' +
+  scene({ phase: phase, scale: 'fein', cont: 'flasche', clo: clo, liq: 'essig', sol: 'backpulver', pk: true, lens: lens !== false, G: 2.3, display: phase === 'offen' ? '148,6 g' : '150,6 g' }) +
+  '<text x="14" y="26" font-size="17" font-weight="700" fill="#12304f">' + label + '</text></svg>'; }
+/* kleine Flaschenbilder für die Auswahlaufgabe */
+function miniBottle(kind, label) {
+  var g = '<path d="M89 40 V62 Q56 72 56 96 V208 Q56 216 64 216 H136 Q144 216 144 208 V96 Q144 72 111 62 V40" fill="#eaf4fb" fill-opacity=".4" stroke="#44617f" stroke-width="3"/><rect x="84" y="28" width="32" height="14" rx="3" fill="#2563eb"/><rect x="57" y="182" width="86" height="33" fill="#f5e6a8"/>';
+  var P = [[78, 100], [122, 100], [78, 130], [122, 130], [78, 160], [122, 160], [100, 75], [100, 115]];
+  if (kind === 'ok') P.slice(0, 6).forEach(function(p){ g += co2(p[0], p[1], 0.85); });
+  if (kind === 'less') P.slice(0, 3).forEach(function(p){ g += co2(p[0], p[1], 0.85); });
+  if (kind === 'more') [[78, 86], [122, 86], [78, 112], [122, 112], [78, 138], [122, 138], [78, 164], [122, 164]].forEach(function(p){ g += co2(p[0], p[1], 0.85); });
+  if (kind === 'loose') { P.slice(0, 6).forEach(function(p, i){ g += at('C', p[0], p[1], 5.5); }); [[66, 88], [134, 88], [66, 118], [134, 118], [66, 148], [134, 148], [100, 92], [100, 140], [92, 170], [110, 170], [100, 104], [100, 154]].forEach(function(p){ g += at('O', p[0], p[1], 6); }); }
+  return '<div>' + frameSvg('<g transform="translate(20,20)">' + g + '</g>', 240, 260, label) + '</div>';
+}
+function enter4() {
+  if (e4) return; e4 = true;
+  $('pimgs').innerHTML = '<div>' + stdScene('bereit', 'deckel', 'A vorher') + '</div><div>' + stdScene('reagiert', 'deckel', 'B nach der Reaktion, zu') + '</div><div>' + stdScene('offen', 'deckel', 'C nach dem Öffnen') + '</div>';
+  var kinds = shuffle(['ok', 'less', 'more', 'loose']), letters = ['1', '2', '3', '4'], imgs = '', opts = [];
+  var FB = { less: 'Hier fehlen Atome. Vorher waren 6 Kohlenstoff-Atome im System. Zähle nach.', more: 'Hier sind mehr Atome als vorher. Atome entstehen nicht neu.', loose: 'Hier liegen die Atome einzeln vor. Bei der Reaktion haben sie sich aber zu Kohlenstoffdioxid-Teilchen gruppiert.' };
+  kinds.forEach(function(k, i){ imgs += miniBottle(k, 'Bild ' + letters[i]); opts.push({ t: 'Bild ' + letters[i] + ' passt zur Reaktion in der Flasche.', ok: k === 'ok', fb: FB[k] }); });
+  mc($('tTeil'), { q: 'Vorher waren 6 Kohlenstoff-Atome und 12 Sauerstoff-Atome im Backpulver gebunden. Welches Bild zeigt die <b>verschlossene</b> Flasche nach der Reaktion richtig?', img: '<div class="pimgs">' + imgs + '</div>', opts: opts.sort(function(x, y){ return x.t < y.t ? -1 : 1; }), keepOrder: true, onOk: function(){ S.ok.teil = true; } });
+  mc($('tDalton'), { q: 'Welche Aussage erklärt mit dem Atommodell, warum die Masse im geschlossenen System gleich bleibt?', opts: [
+    { t: 'Die Atome werden nur umgruppiert. Ihre Anzahl und Masse bleiben gleich.', ok: true, fb: 'Richtig: Gleiche Atome in gleicher Anzahl haben zusammen die gleiche Masse.' },
+    { t: 'Die Atome werden kleiner und leichter, dafür entstehen mehr davon.', fb: 'Atome verändern bei einer Reaktion weder Größe noch Masse.' },
+    { t: 'Die Atome des Gases sind leichter als die Atome im Backpulver.', fb: 'Es sind dieselben Atome. Sie sind nur anders gruppiert.' }], onOk: function(){ S.ok.dalton = true; } });
+}
+$('numBtn').addEventListener('click', function(){
+  var v = num($('numIn').value), fb = $('numFb');
+  if (v !== null && Math.abs(v - 2.2) < 0.001) { fb.className = 'fb good'; fb.textContent = '✓ 150,6 g − 148,4 g = 2,2 g. Diese Masse hatte das Gas.'; S.ok.num = true; $('numIn').disabled = true; $('numBtn').disabled = true; refresh(); }
+  else { fb.className = 'fb bad'; fb.textContent = '✗ Nicht ganz. Rechne: Masse vorher minus Masse nach dem Öffnen.'; }
+});
+
+/* ---------- 5 Protokoll + Abschluss ---------- */
+function dataTable() {
+  var d1 = S.d1, d2 = S.d2, f1 = function(v){ return v == null ? '–' : fmt(v, d1.res) + ' g'; }, f2 = function(v){ return v == null ? '–' : fmt(v, d2.res) + ' g'; };
+  return '<table class="t"><tr><th>Experiment</th><th>vorher</th><th>nach der Reaktion</th><th>nach dem Öffnen</th></tr>' +
+    '<tr><td>1 offen</td><td>' + f1(d1.a) + '</td><td>' + f1(d1.b) + '</td><td>–</td></tr>' +
+    '<tr><td>2 geschlossen</td><td>' + f2(d2.a) + '</td><td>' + f2(d2.b) + '</td><td>' + f2(d2.c) + '</td></tr></table>';
+}
+function enter5() {
+  var b1 = S.h1.dir === 'kleiner' ? 'bestätigt*;widerlegt' : 'widerlegt*;bestätigt', b2 = S.h2 === 'gleich' ? 'bestätigt*;widerlegt' : 'widerlegt*;bestätigt';
+  var mat = (S.src1 === 'home' && S.src2 === 'home') ? 'Küchenwaage, leere 1,5-L-PET-Sprudelflasche mit Deckel, Essig (2 × ca. 100 mL), 2 Päckchen Backpulver, Küchenpapier' :
+    'Experiment 1: ' + (S.src1 === 'lab' ? 'digitales Labor, ' : '') + (S.d1.setup || '') + '. Experiment 2: ' + (S.src2 === 'lab' ? 'digitales Labor, ' : '') + (S.d2.setup || '');
+  buildHE('prot', 'Protokoll', [
+    { h2: 'Übung: Masse bei chemischen Reaktionen' },
+    { h3: '1 Fragestellung' },
+    { p: 'Wie verändert sich die Masse, wenn Backpulver mit Essig reagiert?' },
+    { h3: '2 Hypothesen' },
+    { p: 'Hypothese 1: ' + esc(h1text()) },
+    { p: 'Hypothese 2: ' + esc(h2text()) },
+    { h3: '3 Material und Durchführung' },
+    { p: 'Material: ' + esc(mat) + '.' },
+    { p: 'Das Backpulver wird in Küchenpapier eingewickelt. Alles wird zusammen gewogen, dann fällt das Päckchen in den Essig. Experiment 1: Flasche bleibt offen. Experiment 2: Flasche wird sofort verschlossen und nach der Reaktion wieder geöffnet. Gewogen wird vorher, nach der Reaktion und nach dem Öffnen.' },
+    { h3: '4 Beobachtung' },
+    { p: 'Es sprudelt, ein farbloses Gas entsteht. Die verschlossene Flasche wird prall. Beim Öffnen zischt es.' },
+    { table: dataTable() },
+    { h3: '5 Auswertung' },
+    { p: 'Im offenen Gefäß wird die Masse [[kleiner*;größer;gleich groß]]. Hypothese 1 ist damit [[' + b1 + ']].' },
+    { p: 'Im geschlossenen Gefäß bleibt die Masse [[gleich groß*;kleiner;größer]]. Hypothese 2 ist damit [[' + b2 + ']]. Nach dem Öffnen wird die Masse kleiner, weil das [[Gas*;Wasser]] entweicht.' },
+    { p: 'Das entstandene Gas Kohlenstoffdioxid hat also eine [[Masse*;Farbe]]. Im offenen Gefäß fehlt sie nur, weil das Gas in die Luft entweicht.' },
+    { h3: '6 Ergebnis: Satz von der Erhaltung der Masse' },
+    { p: 'Bei einer chemischen Reaktion im [[geschlossenen*;offenen]] System ist die Gesamtmasse der Ausgangsstoffe [[gleich*;kleiner als;größer als]] die Gesamtmasse der Produkte.' },
+    { p: 'Erklärung nach Dalton: Bei der Reaktion werden die Atome nur [[umgruppiert*;zerstört;neu erzeugt]]. Ihre Anzahl und ihre Masse bleiben gleich.' }
+  ], 'prot');
+  if (!e5) initEnd();
+}
+var e5 = false;
+function initEnd() {
+  e5 = true;
+  if (MEBIS_TEST_URL) { $('testLink').href = MEBIS_TEST_URL; } else { $('testLink').removeAttribute('href'); $('testHint').textContent = 'Öffne im mebis-Kurs den Test „Selbstcheck Masseerhalt“.'; }
+  var AREAS = [['h', 'Eine Hypothese aufstellen und mit Messwerten überprüfen', 'Schau dir Schritt 1 und 2 noch einmal an: Was hattest du vermutet, was hast du gemessen?'],
+    ['s', 'Offene und geschlossene Systeme unterscheiden, Massenänderungen erklären', 'Baue im digitalen Labor beide Versuche noch einmal auf und schalte die Teilchenbrille ein.'],
+    ['d', 'Den Satz von der Erhaltung der Masse mit Atomen begründen', 'Schau dir in Schritt 4 die drei Teilchenbilder an. Zähle die Atome im System.']];
+  var h = '';
+  AREAS.forEach(function(a){ h += '<div class="task"><div class="q">' + a[1] + '</div><div class="ampel" data-k="' + a[0] + '"><button class="g">🟢 sicher</button><button class="y">🟡 teilweise</button><button class="r">🔴 unsicher</button></div><div class="hint fbA"></div></div>'; });
+  $('ampel').innerHTML = h;
+  $$('.ampel').forEach(function(box, i){ $$('button', box).forEach(function(b){ b.addEventListener('click', function(){
+    $$('button', box).forEach(function(x){ x.classList.remove('sel'); }); b.classList.add('sel'); S.ampel[box.dataset.k] = b.className.split(' ')[0];
+    box.parentNode.querySelector('.fbA').textContent = b.classList.contains('r') ? '→ ' + AREAS[i][2] : (b.classList.contains('y') ? '→ Tipp: ' + AREAS[i][2] : '✓ Sehr gut.'); }); }); });
+  mc($('x1'), { q: '🎈 Forscherfrage 1: Setze im Labor einen Luftballon statt des Deckels auf die Flasche. Die Anzeige sinkt etwas, obwohl kein Gas entweicht. Warum?', opts: [
+    { t: 'Der Ballon wird größer, verdrängt Luft und wird von ihr etwas getragen.', ok: true, fb: 'Stark! Das ist der Auftrieb, wie bei einem Schwimmring im Wasser. Deshalb ist ein Ballon kein gutes geschlossenes System zum Wiegen.' },
+    { t: 'Durch die dünne Gummihaut entweicht das Gas sofort ganz nach außen.', fb: 'Dann müsste die Anzeige genauso stark sinken wie im offenen Versuch. Vergleiche die Zahlen.' },
+    { t: 'Das Gas im Ballon hat keine Masse, solange es eingeschlossen ist.', fb: 'Im Versuch mit dem Deckel hat das Gas mitgewogen. Woran liegt der Unterschied beim Ballon?' }] });
+  mc($('x2'), { q: '⚖️ Forscherfrage 2: Brausetablette in Wasser im offenen Glas auf der Küchenwaage: Die Anzeige ändert sich nicht. Auf der Feinwaage schon. Warum?', opts: [
+    { t: 'Es entsteht wenig Gas, der Verlust ist kleiner als die Genauigkeit der Waage.', ok: true, fb: 'Richtig: Die Küchenwaage zeigt erst Unterschiede ab 1 g an. Messgeräte haben Grenzen.' },
+    { t: 'Bei einer Brausetablette entsteht beim Sprudeln eigentlich gar kein Gas.', fb: 'Die Bläschen sind Gas. Warum zeigt die Feinwaage einen Unterschied, die Küchenwaage nicht?' },
+    { t: 'Die Küchenwaage misst die Masse falsch, wenn eine Flüssigkeit sprudelt.', fb: 'Die Küchenwaage misst richtig, nur weniger genau. Vergleiche die Nachkommastellen.' }] });
+  mc($('x3'), { q: '🧂 Forscherfrage 3: Kochsalz in Wasser im offenen Glas: Die Masse bleibt gleich. Warum?', opts: [
+    { t: 'Das Salz löst sich nur, es reagiert nicht und bildet kein Gas.', ok: true, fb: 'Richtig: Lösen ist keine chemische Reaktion. Es entsteht kein Gas, das entweichen könnte.' },
+    { t: 'Das Salz bindet die Luft, sodass kein Stoff entweichen kann.', fb: 'Salz bindet keine Luft. Ist beim Lösen überhaupt ein Gas entstanden?' },
+    { t: 'Salzwasser ist schwerer und gleicht den Verlust genau aus.', fb: 'Es geht nichts verloren, das ausgeglichen werden müsste. Entsteht hier ein Gas?' }] });
+  $('pngBtn').addEventListener('click', function(){
+    var tmp = document.createElement('div'); tmp.innerHTML = stdScene('bereit', 'deckel', 'Experiment 2: geschlossene Flasche auf der Waage', false);
+    var svg = tmp.firstChild; svg.setAttribute('width', 1040); svg.setAttribute('height', 780); svg.removeAttribute('class');
+    var xml = new XMLSerializer().serializeToString(svg), img = new Image();
+    img.onload = function(){ var cv = document.createElement('canvas'); cv.width = 1040; cv.height = 780; var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, 1040, 780); cx.drawImage(img, 0, 0, 1040, 780);
+      cv.toBlob(function(b){ var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'Skizze-Masseerhalt.png'; a.click(); }); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+  });
+}
+
+renderShelf(); update(); renderLog();
+go(0);
+window.__S = S; window.__L = L; window.__RUNS = RUNS; window.__go = go; window.__pick = pick;
+})();
+</script>
+</body>
+</html>
