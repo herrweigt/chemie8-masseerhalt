@@ -114,6 +114,8 @@ table.t th{background:#eef5fd}
 .shelf h4{margin:8px 0 4px;font-size:.88rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .shelf h4:first-child{margin-top:0}
 .shelf button{display:block;width:100%;text-align:left;margin:3px 0;padding:6px 10px;min-height:38px;font-size:.95rem}
+.shelf button.pulse{border-color:#f59e0b;background:#fffbeb;animation:pl 1.2s ease-in-out infinite}
+@keyframes pl{50%{box-shadow:0 0 0 4px rgba(245,158,11,.35)}}
 .shelf button.on{background:#dbeafe;border-color:var(--accent);font-weight:700}
 .bench .wsvg{max-width:560px}
 .labbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
@@ -643,7 +645,8 @@ function msg(t, cls) { var m = $('labMsg'); m.className = 'labmsg ' + (cls || ''
 function renderShelf() {
   var h = '';
   GROUPS.forEach(function(g){ h += '<h4>' + g[1] + '</h4>'; Object.keys(IT).forEach(function(k){ if (IT[k].g !== g[0]) return;
-    var on = g[0] === 'pk' ? L.pk : L[g[0]] === k; h += '<button data-k="' + k + '" class="' + (on ? 'on' : '') + '">' + IT[k].t + '</button>'; }); });
+    var on = g[0] === 'pk' ? L.pk : L[g[0]] === k, hint = g[0] === 'pk' && L.phase === 'zufrueh';
+    h += '<button data-k="' + k + '" class="' + (on ? 'on' : '') + (hint ? ' pulse' : '') + '">' + IT[k].t + '</button>'; }); });
   $('shelf').innerHTML = h;
   $$('#shelf button').forEach(function(b){ b.addEventListener('click', function(){ pick(b.dataset.k); }); });
 }
@@ -651,6 +654,7 @@ function pick(k) {
   var g = IT[k].g;
   if (L.phase === 'laeuft') return;
   if (g === 'scale') { L.scale = L.scale === k ? null : k; return update(); }
+  if (L.phase === 'zufrueh') { msg('Die Reaktion ist schon gestartet. Tippe auf 🧹 <b>Alles abräumen</b> und baue neu auf. Wähle diesmal das <b>Küchenpapier-Päckchen</b>, bevor du den Feststoff dazugibst.', 'warn'); return; }
   if (L.phase !== 'aufbau' && L.phase !== 'bereit') { msg('Der Versuch ist schon gelaufen. Tippe auf 🧹 <b>Alles abräumen</b>, um neu aufzubauen.', 'warn'); return; }
   if (g === 'cont') { L.cont = L.cont === k ? null : k; if (L.clo === 'ballon' && L.cont !== 'flasche') L.clo = null; if (L.cont === 'glas') L.clo = null; }
   else if (g === 'clo') {
@@ -667,7 +671,10 @@ function pick(k) {
 function update(changed) {
   if (changed && (L.phase === 'aufbau' || L.phase === 'bereit')) {
     L.run = null;
-    if (L.liq && L.sol && !L.pk && gas() > 0) { L.phase = 'zufrueh'; msg('Oh! Das ' + (L.sol === 'brause' ? 'Brausetablette' : 'Backpulver') + ' fällt direkt in die Flüssigkeit und sprudelt sofort. Den Wert <b>vorher</b> kannst du jetzt nicht mehr messen. Räume ab und überlege, wie du die Stoffe getrennt halten kannst.', 'warn'); }
+    if (L.liq && L.sol && !L.pk && gas() > 0) { L.phase = 'zufrueh'; L.early = (L.early || 0) + 1;
+      msg('Oh! ' + (L.sol === 'brause' ? 'Die Brausetablette' : 'Das Backpulver') + ' fällt direkt in die Flüssigkeit und sprudelt sofort. Den Wert <b>vorher</b> kannst du jetzt nicht mehr messen.<br>' +
+        (L.early === 1 ? '💡 Schau im Geräteschrank unter <b>Hilfsmittel</b> nach: Damit kannst du den Feststoff vom Essig getrennt halten, bis du gewogen hast.'
+                       : '💡 So geht es: <b>🧹 Alles abräumen</b> → Gefäß und Flüssigkeit wählen → zuerst das <b>Küchenpapier-Päckchen</b> → dann den Feststoff. Der Feststoff liegt jetzt im Päckchen und reagiert erst, wenn du auf ▶ <b>Reaktion starten</b> tippst.'), 'warn'); }
     else if (L.cont && L.liq && L.sol && L.pk) { L.phase = 'bereit'; msg(L.scale ? 'Aufbau fertig. Notiere den Wert <b>vorher</b> (📝) und starte dann die Reaktion.' : 'Aufbau fertig. Aber womit willst du die Masse messen?', L.scale ? 'good' : 'warn'); }
     else { L.phase = 'aufbau';
       if (L.liq && L.sol && !L.pk) msg('Tipp: Wenn du den Feststoff in ein Papier-Päckchen legst, kannst du alles wiegen, bevor die Reaktion startet.');
@@ -679,6 +686,7 @@ function buttons() {
   $('bStart').disabled = L.phase !== 'bereit';
   $('bOpen').disabled = !(L.phase === 'reagiert' && (L.clo === 'deckel' || L.clo === 'ballon'));
   $('bNote').disabled = !L.scale || !(L.phase === 'bereit' || L.phase === 'reagiert' || L.phase === 'offen');
+  $('bClear').classList.toggle('pulse', L.phase === 'zufrueh'); $('bClear').style.borderColor = L.phase === 'zufrueh' ? '#f59e0b' : '';
   $('bLens').classList.toggle('sel', L.lens); $('bLens').style.fontWeight = L.lens ? '700' : '';
 }
 $('bNote').addEventListener('click', function(){
