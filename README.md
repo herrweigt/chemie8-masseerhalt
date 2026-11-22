@@ -6,3 +6,5 @@ Selbstständig bearbeitbare Lernseite (eine `index.html`, kein Build nötig) fü
 
 Inhalt: Wegwahl (Heimexperiment mit Laborfreigabe oder digitales Labor), Hypothese 1, Experiment 1 (offen), neue Hypothese, Experiment 2 (geschlossen + Öffnen), Teilchenebene nach Dalton, automatisch erzeugtes Protokoll zum Kopieren ins digitale Heft, Forscherecke (Ballon/Auftrieb, Messgenauigkeit, Kochsalz).
 Das digitale Labor: Geräte und Stoffe frei wählbar (Küchen-/Feinwaage, Glas, PET-Flasche, Marmeladenglas, Deckel, Ballon, Essig, Wasser, Backpulver, Brausetablette, Kochsalz, Küchenpapier-Päckchen), Laborbuch, Teilchenbrille.
+
+Der Selbstcheck-Test (4 Fragen „Freitext (KI-Feedback)“) liegt als Moodle-XML in `mebis/SC_Masseerhalt_C8_KI_moodle.xml`; der mebis-Link steht in `MEBIS_TEST_URL` am Anfang des Skripts in `index.html`.
