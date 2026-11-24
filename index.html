@@ -161,11 +161,11 @@ table.t th{background:#eef5fd}
     <h3>Ablauf (Richtwerte)</h3>
     <table class="t">
       <tr><th>Schritt</th><th>Was</th><th>Zeit</th></tr>
-      <tr><td>0</td><td>Start: Weg wählen + Wiederholung</td><td>8 min</td></tr>
+      <tr><td>0</td><td>Start: Weg wählen + Wiederholung mit Teilchen-Werkstatt</td><td>13 min</td></tr>
       <tr><td>1</td><td>Fragestellung und Hypothese</td><td>7 min</td></tr>
-      <tr><td>2</td><td>Experiment 1: offen</td><td>17 min</td></tr>
-      <tr><td>3</td><td>Experiment 2: geschlossen</td><td>17 min</td></tr>
-      <tr><td>4</td><td>Erklärung mit Atomen</td><td>11 min</td></tr>
+      <tr><td>2</td><td>Experiment 1: offen</td><td>16 min</td></tr>
+      <tr><td>3</td><td>Experiment 2: geschlossen</td><td>16 min</td></tr>
+      <tr><td>4</td><td>Erklärung mit Atomen</td><td>8 min</td></tr>
       <tr><td>5</td><td>Protokoll ins Heft + Selbstcheck auf mebis</td><td>20 min</td></tr>
     </table>
     <h3>So arbeitest du</h3>
@@ -194,6 +194,18 @@ table.t th{background:#eef5fd}
     <h3>Wiederholung</h3>
     <div id="r1" class="task"></div>
     <div id="r2" class="task"></div>
+    <div class="task" id="werk">
+      <div class="q">⚛️ Teilchen-Werkstatt: Die Wasserzerlegung nach Dalton</div>
+      <p>Im Hofmann-Apparat entstehen aus Wasser die Gase Wasserstoff und Sauerstoff. Stelle das als Reaktionsschema auf Teilchenebene dar. Wähle mit − und +, wie viele Teilchen links und rechts stehen. Am Ende muss jedes Atom von links auch rechts wieder vorkommen.</p>
+      <div class="legend"><span><svg width="24" height="24"><circle cx="12" cy="12" r="9" fill="#6b7280" stroke="#374151" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="#fff" fill-opacity=".8"/></svg> Wasserstoff-Atom (H)</span><span><svg width="24" height="24"><circle cx="12" cy="12" r="10" fill="#e5483b" stroke="#9b2217" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="#fff" fill-opacity=".8"/></svg> Sauerstoff-Atom (O)</span></div>
+      <svg id="werkSvg" class="wsvg" viewBox="0 0 900 250" role="img" aria-label="Reaktionsschema auf Teilchenebene" style="max-width:900px"></svg>
+      <div class="row" id="werkCtl" style="gap:18px;flex-wrap:wrap;margin:6px 0"></div>
+      <table class="t" id="werkBil"></table>
+      <div class="row" style="margin-top:6px"><button id="werkBtn" class="primary">Prüfen</button></div>
+      <details class="tip"><summary>Tipp 1</summary>Zähle links die Wasserstoff- und die Sauerstoff-Atome. Rechts muss genau dieselbe Anzahl stehen. Es dürfen keine Atome übrig bleiben und keine dazukommen.</details>
+      <details class="tip"><summary>Tipp 2</summary>Ein Sauerstoff-Teilchen besteht aus <b>zwei</b> Sauerstoff-Atomen. Ein Wasser-Teilchen enthält aber nur <b>ein</b> Sauerstoff-Atom. Wie viele Wasser-Teilchen brauchst du also mindestens?</details>
+      <div class="fb" id="werkFb"></div>
+    </div>
     <div id="r3" class="task"></div>
     <div class="gate"><button class="primary next">Los geht's ▶</button><span class="hint need"></span></div>
   </div>
@@ -323,8 +335,8 @@ table.t th{background:#eef5fd}
     <p>Der französische Chemiker <b>Antoine Lavoisier</b> hat im 18. Jahrhundert ähnliche Versuche sehr genau gewogen. Sein Ergebnis kennst du jetzt aus deinem eigenen Experiment:</p>
     <div class="goal" style="font-size:1.05rem"><b>Satz von der Erhaltung der Masse:</b> Bei einer chemischen Reaktion in einem <b>geschlossenen System</b> ist die Gesamtmasse der Ausgangsstoffe gleich der Gesamtmasse der Produkte.</div>
     <h3>Blick durch die Teilchenbrille</h3>
-    <p>Nach Dalton bestehen alle Stoffe aus Atomen. Die Bilder zeigen nur die Atome, aus denen später das Gas Kohlenstoffdioxid wird. Die gestrichelte Linie zeigt das <b>System</b>: alles, was auf der Waage steht. Was die Linie verlässt, wird nicht mehr mitgewogen.</p>
-    <div class="legend"><span><svg width="22" height="22"><circle cx="11" cy="11" r="9" fill="#4b5563" stroke="#111827" stroke-width="1.5"/></svg> Kohlenstoff-Atom (C)</span><span><svg width="22" height="22"><circle cx="11" cy="11" r="9" fill="#e5483b" stroke="#9b2217" stroke-width="1.5"/></svg> Sauerstoff-Atom (O)</span></div>
+    <p>Wie bei der Wasserzerlegung in der Teilchen-Werkstatt gilt: Atome werden nur umgruppiert. Die Bilder zeigen nur die Atome, aus denen später das Gas Kohlenstoffdioxid wird. Die gestrichelte Linie zeigt das <b>System</b>: alles, was auf der Waage steht. Was die Linie verlässt, wird nicht mehr mitgewogen.</p>
+    <div class="legend"><span><svg width="22" height="22"><circle cx="11" cy="11" r="9" fill="#1f2328" stroke="#000" stroke-width="1.5"/></svg> Kohlenstoff-Atom (C)</span><span><svg width="22" height="22"><circle cx="11" cy="11" r="9" fill="#e5483b" stroke="#9b2217" stroke-width="1.5"/></svg> Sauerstoff-Atom (O)</span></div>
     <div class="pimgs" id="pimgs"></div>
   </div>
   <div class="card">
@@ -417,7 +429,7 @@ var num = function(s){ var v = parseFloat(String(s).replace(',', '.')); return i
 
 var MEBIS_TEST_URL = 'https://lernplattform.bycs.de/mod/quiz/view.php?id=106282853'; /* mebis: Link zum Selbstcheck „Masseerhalt“ hier eintragen */
 window.__MCS = [];
-var STEPS = [ { t: 'Start', min: 8 }, { t: '1 Hypothese', min: 7 }, { t: '2 Offen', min: 17 }, { t: '3 Geschlossen', min: 17 }, { t: '4 Erklärung', min: 11 }, { t: '5 Protokoll + Test', min: 20 } ];
+var STEPS = [ { t: 'Start', min: 13 }, { t: '1 Hypothese', min: 7 }, { t: '2 Offen', min: 16 }, { t: '3 Geschlossen', min: 16 }, { t: '4 Erklärung', min: 8 }, { t: '5 Protokoll + Test', min: 20 } ];
 var S = { step: 0, max: 0, ok: {}, ampel: {}, mode: null, h1: null, h2: null, d1: {}, d2: {}, src1: null, src2: null };
 
 /* ---------- Aufgabentypen (wie Chemie 9) ---------- */
@@ -499,8 +511,8 @@ function copyHE(ids, msgEl) {
 function need(i) {
   var chk = function(keys, names) { var m = []; keys.forEach(function(k){ if (!S.ok[k]) m.push(names[k]); }); return m.length ? 'Noch offen: ' + m.join(', ') : ''; };
   switch (i) {
-    case 1: var k1 = ['mode', 'r1', 'r2', 'r3']; if (S.mode === 'home') k1.push('frei');
-      return chk(k1, { mode: 'Weg wählen', r1: 'Wiederholung 1', r2: 'Wiederholung 2', r3: 'Wiederholung 3', frei: 'Laborfreigabe' });
+    case 1: var k1 = ['mode', 'r1', 'r2', 'werk', 'r3']; if (S.mode === 'home') k1.push('frei');
+      return chk(k1, { mode: 'Weg wählen', r1: 'Wiederholung 1', r2: 'Wiederholung 2', werk: 'Teilchen-Werkstatt', r3: 'Wiederholung 3', frei: 'Laborfreigabe' });
     case 2: return chk(['h1'], { h1: 'Hypothese festlegen' });
     case 3: return chk(['d1', 'aw1', 'wohin'], { d1: 'Messwerte Experiment 1', aw1: 'Auswertung', wohin: 'Erklärung' });
     case 4: return chk(['plan', 'h2', 'd2', 'aw2', 'oeffnen'], { plan: 'Planung', h2: 'Hypothese 2', d2: 'Messwerte Experiment 2', aw2: 'Auswertung', oeffnen: 'Erklärung' });
@@ -587,6 +599,41 @@ mc($('r3'), { q: 'Was passiert nach Dalton mit den Atomen bei einer chemischen R
   { t: 'Sie werden umgruppiert, und ihre Anzahl bleibt dabei gleich.', ok: true, fb: 'Richtig: Atome werden weder zerstört noch neu erzeugt.' },
   { t: 'Sie verwandeln sich dabei in Atome eines anderen Elements.', fb: 'Atome eines Elements bleiben Atome dieses Elements.' },
   { t: 'Sie werden zuerst zerstört und danach wieder neu erzeugt.', fb: 'Atome werden nicht zerstört und nicht neu erzeugt.' }], onOk: function(){ S.ok.r3 = true; } });
+
+/* ---------- Teilchen-Werkstatt: Wasserzerlegung ---------- */
+var W = { w: 1, h: 0, o: 0, done: false }, WMAX = { w: 4, h: 4, o: 3 };
+function werkDraw() {
+  var g = '<rect x="1" y="1" width="898" height="248" rx="12" fill="#2f5d46"/><rect x="1" y="1" width="898" height="248" rx="12" fill="none" stroke="#1d3b2c" stroke-width="3"/>';
+  var cell = function(i, x0, dx, perRow, y0, dy){ return [x0 + (i % perRow) * dx, y0 + Math.floor(i / perRow) * dy]; };
+  for (var i = 0; i < W.w; i++) { var p = cell(i, 75, 120, 2, 85, 100); g += at('H', p[0] - 26, p[1] - 22, 14) + at('H', p[0] + 26, p[1] - 22, 14) + at('O', p[0], p[1], 21); }
+  g += '<line x1="292" y1="130" x2="368" y2="130" stroke="#fff" stroke-width="6"/><path d="M368 116 L392 130 L368 144 Z" fill="#fff"/>';
+  for (i = 0; i < W.h; i++) { p = cell(i, 445, 90, 2, 85, 100); g += at('H', p[0] - 14, p[1], 15) + at('H', p[0] + 14, p[1], 15); }
+  g += '<text x="610" y="142" text-anchor="middle" font-size="44" font-weight="700" fill="#fff">+</text>';
+  for (i = 0; i < W.o; i++) { p = cell(i, 705, 110, 2, 80, 95); g += at('O', p[0] - 19, p[1], 20) + at('O', p[0] + 19, p[1], 20); }
+  g += '<text x="160" y="240" text-anchor="middle" font-size="15" fill="#e6f0ea">Wasser-Teilchen</text><text x="490" y="240" text-anchor="middle" font-size="15" fill="#e6f0ea">Wasserstoff-Teilchen</text><text x="760" y="240" text-anchor="middle" font-size="15" fill="#e6f0ea">Sauerstoff-Teilchen</text>';
+  $('werkSvg').innerHTML = g;
+  var hl = 2 * W.w, ol = W.w, hr = 2 * W.h, orr = 2 * W.o, ok = function(a, b){ return a === b ? '<span style="color:var(--ok)">✓</span>' : '<span style="color:var(--bad)">✗</span>'; };
+  $('werkBil').innerHTML = '<tr><th></th><th>links (vorher)</th><th>rechts (nachher)</th><th></th></tr><tr><td>Wasserstoff-Atome</td><td>' + hl + '</td><td>' + hr + '</td><td>' + ok(hl, hr) + '</td></tr><tr><td>Sauerstoff-Atome</td><td>' + ol + '</td><td>' + orr + '</td><td>' + ok(ol, orr) + '</td></tr>';
+}
+function werkCtl() {
+  var lab = { w: 'Wasser-Teilchen', h: 'Wasserstoff-Teilchen', o: 'Sauerstoff-Teilchen' }, h = '';
+  ['w', 'h', 'o'].forEach(function(k){ h += '<span><b>' + lab[k] + ':</b> <button data-k="' + k + '" data-d="-1">−</button> <b style="display:inline-block;min-width:18px;text-align:center">' + W[k] + '</b> <button data-k="' + k + '" data-d="1">+</button></span>'; });
+  $('werkCtl').innerHTML = h;
+  $$('#werkCtl button').forEach(function(b){ b.disabled = W.done; b.addEventListener('click', function(){ var k = b.dataset.k, v = W[k] + (+b.dataset.d); if (v < (k === 'w' ? 1 : 0) || v > WMAX[k]) return; W[k] = v; $('werkFb').className = 'fb'; $('werkFb').textContent = ''; werkCtl(); werkDraw(); }); });
+}
+$('werkBtn').addEventListener('click', function(){
+  var fb = $('werkFb'), hl = 2 * W.w, ol = W.w, hr = 2 * W.h, orr = 2 * W.o;
+  if (hl === hr && ol === orr) {
+    W.done = true; S.ok.werk = true; $('werkBtn').disabled = true; werkCtl(); fb.className = 'fb good';
+    fb.innerHTML = '✓ Richtig! Aus ' + W.w + ' Wasser-Teilchen entstehen ' + W.h + ' Wasserstoff-Teilchen und ' + W.o + ' Sauerstoff-Teilchen. Links und rechts stehen gleich viele Atome von jeder Sorte: Sie werden nur <b>umgruppiert</b>.' + (W.w > 2 ? ' (Es geht auch kleiner: mit 2 Wasser-Teilchen.)' : '');
+    refresh(); return;
+  }
+  fb.className = 'fb bad';
+  if (ol % 2 === 1 && ol !== orr) fb.textContent = '✗ Ein Sauerstoff-Atom bleibt übrig oder fehlt. Sauerstoff-Teilchen bestehen aus zwei Atomen. Mit einer ungeraden Zahl Wasser-Teilchen geht das nicht auf.';
+  else if (hr !== hl && orr !== ol) fb.textContent = '✗ Weder die Wasserstoff- noch die Sauerstoff-Atome stimmen. Zähle in der Tabelle nach.';
+  else if (hr < hl || orr < ol) fb.textContent = '✗ Rechts fehlen Atome. Atome verschwinden bei einer Reaktion nicht.';
+  else fb.textContent = '✗ Rechts sind zu viele Atome. Atome entstehen bei einer Reaktion nicht neu.';
+});
 
 /* ---------- 1 Hypothese ---------- */
 function h1chk() { $('h1fix').disabled = !($('h1dir').value && $('h1why').value) || !!S.h1; }
@@ -724,7 +771,8 @@ function renderLog() {
 }
 
 /* --- Zeichnung --- */
-function at(t, x, y, r) { var c = t === 'C' ? ['#4b5563', '#111827'] : ['#e5483b', '#9b2217']; return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c[0] + '" stroke="' + c[1] + '" stroke-width="1.2"/>'; }
+var ATC = { C: ['#1f2328', '#000'], O: ['#e5483b', '#9b2217'], H: ['#6b7280', '#374151'] };
+function at(t, x, y, r) { var c = ATC[t]; return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c[0] + '" stroke="' + c[1] + '" stroke-width="1.2"/><circle cx="' + (x - r * 0.35) + '" cy="' + (y - r * 0.35) + '" r="' + (r * 0.22) + '" fill="#fff" fill-opacity=".75"/>'; }
 function co2(x, y, s) { s = s || 1; return at('O', x - 12 * s, y, 6.5 * s) + at('C', x, y, 6 * s) + at('O', x + 12 * s, y, 6.5 * s); }
 function bubbles(x0, x1, yb, yt, n) {
   var g = ''; for (var i = 0; i < n; i++) { var x = x0 + (x1 - x0) * ((i * 37 % 100) / 100), d = (0.9 + (i % 5) * 0.25).toFixed(2), r = 2.5 + (i % 3);
@@ -1038,7 +1086,7 @@ function initEnd() {
   });
 }
 
-renderShelf(); update(); renderLog();
+renderShelf(); update(); renderLog(); werkCtl(); werkDraw();
 go(0);
 window.__S = S; window.__L = L; window.__RUNS = RUNS; window.__go = go; window.__pick = pick;
 })();
