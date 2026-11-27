@@ -8,3 +8,5 @@ Inhalt: Wegwahl (Heimexperiment mit Laborfreigabe oder digitales Labor), Hypothe
 Das digitale Labor: Geräte und Stoffe frei wählbar (Küchen-/Feinwaage, Glas, PET-Flasche, Marmeladenglas, Deckel, Ballon, Essig, Wasser, Backpulver, Brausetablette, Kochsalz, Küchenpapier-Päckchen), Laborbuch, Teilchenbrille.
 
 Der Selbstcheck-Test (4 Fragen „Freitext (KI-Feedback)“) liegt als Moodle-XML in `mebis/SC_Masseerhalt_C8_KI_moodle.xml`; der mebis-Link steht in `MEBIS_TEST_URL` am Anfang des Skripts in `index.html`.
+
+Lehrermodus: 5x schnell auf den Titel tippen, Code `masse` (änderbar in `LEHRER_CODE` am Anfang des Skripts). Dann sind alle Abschnitte frei, Abschnitte lassen sich automatisch lösen und Lösungshinweise einblenden.

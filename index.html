@@ -134,14 +134,20 @@ table.t th{background:#eef5fd}
 .sel2{font-size:1rem;padding:4px;border:2px solid #b8c4d2;border-radius:6px}
 .sel2.ok{border-color:var(--ok);background:#ecfdf3}
 .sel2.no{border-color:var(--bad);background:#fef2f2}
+#teachBar{display:none;background:#7c2d12;color:#fff;padding:6px 14px;gap:8px;align-items:center;flex-wrap:wrap;font-size:.92rem}
+#teachBar.on{display:flex}
+#teachBar button{background:transparent;color:#fff;border-color:#fdba74;min-height:34px;padding:3px 10px;font-size:.9rem}
+.teach-sol{display:none}
+body.teach .teach-sol{display:block;background:#fff7ed;border:1px dashed #c2410c;border-radius:8px;padding:6px 10px;margin:6px 0;font-size:.92rem}
 @media(max-width:760px){.lab{grid-template-columns:1fr}.mode{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
-  <div><h1>Chemie 8 · Übung · Wohin verschwindet die Masse?</h1><p>Distanzunterricht · selbstständig arbeiten · ca. 80 Minuten</p></div>
+  <div><h1 id="title">Chemie 8 · Übung · Wohin verschwindet die Masse?</h1><p>Distanzunterricht · selbstständig arbeiten · ca. 80 Minuten</p></div>
   <button id="wsBtn">📖 Wortspeicher</button>
 </header>
+<div id="teachBar"><b>Lehrermodus</b><span>Alle Abschnitte frei.</span><button id="tSolve">Diesen Abschnitt lösen</button><button id="tSolveAll">Alles lösen</button><button id="tSols">Lösungshinweise ein/aus</button><button id="tOff">Lehrermodus beenden</button></div>
 <div id="nav"></div>
 <main>
 
@@ -400,6 +406,13 @@ table.t th{background:#eef5fd}
   </div>
 </div>
 
+<div class="modal" id="pinModal"><div class="box" style="max-width:360px">
+  <h2>Lehrermodus</h2>
+  <p class="hint">Code eingeben:</p>
+  <div class="row"><input type="password" id="pinIn" style="padding:8px;border:1px solid var(--line);border-radius:8px;flex:1"><button class="primary" id="pinOk">OK</button><button id="pinCancel">Abbrechen</button></div>
+  <div class="fb bad" id="pinFb"></div>
+</div></div>
+
 <div class="modal" id="wsModal"><div class="box">
   <h2>Wortspeicher</h2>
   <ul>
@@ -427,7 +440,12 @@ var esc = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;
 var fmt = function(v, res){ return (res === 0.1 ? v.toFixed(1) : (Math.abs(v - Math.round(v)) < 1e-9 ? v.toFixed(0) : v.toFixed(1))).replace('.', ','); };
 var num = function(s){ var v = parseFloat(String(s).replace(',', '.')); return isNaN(v) ? null : v; };
 
-var MEBIS_TEST_URL = 'https://lernplattform.bycs.de/mod/quiz/view.php?id=106282853'; /* mebis: Link zum Selbstcheck „Masseerhalt“ hier eintragen */
+var MEBIS_TEST_URL = 'https://lernplattform.bycs.de/mod/quiz/view.php?id=106282853';
+var LEHRER_CODE = 'masse'; /* Lehrermodus: 5x schnell auf den Titel tippen, dann diesen Code eingeben */
+var TEACH = false, SOLVERS = {};
+function secOf(el){ var s = el.closest('.step'); return s ? +s.dataset.s : -1; }
+function addSolver(el, fn){ var k = secOf(el); (SOLVERS[k] = SOLVERS[k] || []).push(fn); }
+function solution(el, html){ var d = document.createElement('div'); d.className = 'teach-sol'; d.innerHTML = 'Lösung: ' + html; el.appendChild(d); } /* mebis: Link zum Selbstcheck „Masseerhalt“ hier eintragen */
 window.__MCS = [];
 var STEPS = [ { t: 'Start', min: 13 }, { t: '1 Hypothese', min: 7 }, { t: '2 Offen', min: 16 }, { t: '3 Geschlossen', min: 16 }, { t: '4 Erklärung', min: 8 }, { t: '5 Protokoll + Test', min: 20 } ];
 var S = { step: 0, max: 0, ok: {}, ampel: {}, mode: null, h1: null, h2: null, d1: {}, d2: {}, src1: null, src2: null };
@@ -445,6 +463,8 @@ function mc(el, cfg) {
   html += '</div>' + (cfg.tip ? '<details class="tip"><summary>Tipp</summary>' + cfg.tip + '</details>' : '') + '<div class="fb"></div>';
   el.innerHTML = html;
   var fb = el.querySelector('.fb'), done = false;
+  solution(el, cfg.opts.filter(function(o){ return o.ok; }).map(function(o){ return o.t; }).join(' / '));
+  addSolver(el, function(){ if (done) return; var inp = $$('input', el).filter(function(x){ return cfg.opts[+x.value].ok; })[0]; inp.checked = true; inp.dispatchEvent(new Event('change')); });
   $$('input', el).forEach(function(inp){ inp.addEventListener('change', function(){
     if (done) return; var o = cfg.opts[+inp.value], lab = inp.closest('.opt');
     if (o.ok) { lab.classList.add('right'); fb.className = 'fb good'; fb.innerHTML = '✓ ' + (o.fb || 'Richtig.'); done = true; $$('input', el).forEach(function(x){ x.disabled = true; }); if (cfg.onOk) cfg.onOk(); refresh(); }
@@ -478,6 +498,7 @@ function buildHE(id, title, blocks, key) {
     var all = $$('select', el).every(function(x){ return x.value === x.dataset.r; });
     S.ok[key] = all; $$('.cpy', el)[0].disabled = !all; $$('.msg', el)[0].textContent = all ? '✓ Alles richtig. Du kannst kopieren.' : 'Rot markierte Lücken noch einmal überlegen.'; refresh(); }); });
   $$('.cpy', el)[0].addEventListener('click', function(){ copyHE([id], $$('.msg', el)[0]); });
+  addSolver(el, function(){ $$('select', el).forEach(function(x){ x.value = x.dataset.r; x.dispatchEvent(new Event('change')); }); });
 }
 function heContent(id) {
   var el = HE[id].el.querySelector('.he'), html = '', plain = '';
@@ -525,7 +546,7 @@ function renderNav() {
   STEPS.forEach(function(s, i){
     var b = document.createElement('button'); b.textContent = s.t;
     b.className = (i === S.step ? 'cur ' : '') + (i < S.max ? 'done' : '');
-    b.disabled = i > S.max; b.addEventListener('click', function(){ go(i); });
+    b.disabled = !TEACH && i > S.max; b.addEventListener('click', function(){ go(i); });
     nav.appendChild(b);
   });
   var rest = 0; for (var i = S.step; i < STEPS.length; i++) rest += STEPS[i].min;
@@ -538,6 +559,7 @@ function placeLab() {
   if (show) { slot.appendChild(box); box.style.display = ''; } else { document.body.appendChild(box); box.style.display = 'none'; }
 }
 function go(i) {
+  if (TEACH) prepare(i);
   S.step = i; if (i > S.max) S.max = i;
   $$('.step').forEach(function(s){ s.classList.toggle('cur', +s.dataset.s === i); });
   if (i === 2) enter2();
@@ -549,7 +571,7 @@ function go(i) {
 function refresh() {
   $$('.step').forEach(function(sec){
     var i = +sec.dataset.s, n = need(i + 1);
-    $$('.next', sec).forEach(function(b){ b.disabled = !!n; });
+    $$('.next', sec).forEach(function(b){ b.disabled = !TEACH && !!n; });
     $$('.need', sec).forEach(function(h){ h.textContent = n; });
   });
   renderNav();
@@ -1087,6 +1109,43 @@ function initEnd() {
 }
 
 renderShelf(); update(); renderLog(); werkCtl(); werkDraw();
+
+/* ===== Lehrermodus: Löser für die eigenen Bausteine ===== */
+var ENTER = { 2: enter2, 3: enter3, 4: enter4 };
+/* Beim Springen im Lehrermodus werden alle früheren Abschnitte automatisch gelöst, damit die Seite einen gültigen Zustand hat. */
+function prepare(i) { for (var j = 0; j < i; j++) { if (ENTER[j]) ENTER[j](); if (need(j + 1)) solveSec(j); } }
+addSolver($('werk'), function(){ if (W.done) return; W.w = 2; W.h = 2; W.o = 1; werkCtl(); werkDraw(); $('werkBtn').click(); });
+solution($('werk'), '2 Wasser-Teilchen → 2 Wasserstoff-Teilchen + 1 Sauerstoff-Teilchen (4 H-Atome und 2 O-Atome auf beiden Seiten).');
+addSolver($('werk'), function(){ if (!S.mode) $$('.mode button[data-m=lab]')[0].click(); });
+addSolver($('h1box'), function(){ if (S.h1) return; $('h1dir').value = 'kleiner'; $('h1why').selectedIndex = 1; h1chk(); $('h1fix').click(); });
+addSolver($('aw1'), function(){
+  if (!(S.d1.a != null && S.d1.b != null && S.d1.b < S.d1.a)) { S.d1 = { a: 148.3, b: 146.2, res: 0.1, setup: 'Beispielwerte (Lehrermodus)' }; S.src1 = 'lab'; renderTab(1); }
+  $('aw1a').value = 'kleiner'; $('aw1b').value = S.h1 && S.h1.dir === 'kleiner' ? 'bestätigt' : 'widerlegt'; evalAw1(); });
+solution($('aw1'), 'kleiner; bestätigt, wenn die Hypothese „kleiner“ lautete, sonst widerlegt.');
+addSolver($('h2box'), function(){ if (S.h2) return; $('h2dir').value = 'gleich'; $('h2fix').disabled = false; $('h2fix').click(); });
+addSolver($('aw2'), function(){
+  if (!(S.d2.a != null && S.d2.b === S.d2.a && S.d2.c != null && S.d2.c < S.d2.b)) { S.d2 = { a: 150.6, b: 150.6, c: 148.6, res: 0.1, setup: 'Beispielwerte (Lehrermodus)' }; S.src2 = 'lab'; renderTab(2); }
+  $('aw2a').value = 'gleich'; $('aw2b').value = 'kleiner'; $('aw2c').value = S.h2 === 'gleich' ? 'bestätigt' : 'widerlegt'; evalAw2(); });
+solution($('aw2'), 'gleich groß; kleiner; bestätigt, wenn die Hypothese 2 „gleich groß“ lautete.');
+addSolver($('tNum'), function(){ if (S.ok.num) return; $('numIn').value = '2,2'; $('numBtn').click(); });
+solution($('tNum'), '150,6 g − 148,4 g = 2,2 g');
+
+var taps = [];
+$('title').addEventListener('click', function(){
+  var now = Date.now(); taps = taps.filter(function(t){ return now - t < 2000; }); taps.push(now);
+  if (taps.length >= 5) { taps = []; if (TEACH) return; $('pinIn').value = ''; $('pinFb').textContent = ''; $('pinModal').classList.add('on'); setTimeout(function(){ $('pinIn').focus(); }, 50); }
+});
+function pinTry(){ if ($('pinIn').value.trim().toLowerCase() === LEHRER_CODE) { $('pinModal').classList.remove('on'); setTeach(true); } else $('pinFb').textContent = 'Falscher Code.'; }
+$('pinOk').addEventListener('click', pinTry);
+$('pinIn').addEventListener('keydown', function(e){ if (e.key === 'Enter') pinTry(); });
+$('pinCancel').addEventListener('click', function(){ $('pinModal').classList.remove('on'); });
+function setTeach(on){ TEACH = on; $('teachBar').classList.toggle('on', on); if (!on) document.body.classList.remove('teach'); try { sessionStorage.setItem('lm-masse8', on ? '1' : ''); } catch (e) {} refresh(); }
+function solveSec(i){ if (ENTER[i]) ENTER[i](); (SOLVERS[i] || []).forEach(function(f){ try { f(); } catch (e) {} }); refresh(); }
+$('tSolve').addEventListener('click', function(){ solveSec(S.step); });
+$('tSolveAll').addEventListener('click', function(){ prepare(5); go(5); solveSec(5); });
+$('tSols').addEventListener('click', function(){ document.body.classList.toggle('teach'); });
+$('tOff').addEventListener('click', function(){ setTeach(false); });
+try { if (sessionStorage.getItem('lm-masse8') === '1') setTeach(true); } catch (e) {}
 go(0);
 window.__S = S; window.__L = L; window.__RUNS = RUNS; window.__go = go; window.__pick = pick;
 })();
